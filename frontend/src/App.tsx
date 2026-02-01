@@ -1,5 +1,11 @@
+import RecipeForm from "./components/RecipeForm"
+
 function App() {
-  return <></>
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <RecipeForm />
+    </div>
+  )
 }
 
 export default App
