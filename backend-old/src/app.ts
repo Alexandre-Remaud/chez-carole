@@ -8,15 +8,12 @@ import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
 
-// --- Global middlewares ---
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// --- Routes ---
 app.use("/api", routes);
 
-// --- Errors ---
 app.use(notFound);
 app.use(errorHandler);
 
