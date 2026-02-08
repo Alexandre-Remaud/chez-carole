@@ -1,5 +1,5 @@
-import type { CreateRecipeContract } from "@/contracts/recipe.contract"
-import type { RecipeFormData } from "@/schemas/recipe.schema"
+import type { CreateRecipeContract } from "@recipes/contract"
+import type { RecipeFormData } from "@recipes/schema"
 
 function toCreateRecipePayload(formData: RecipeFormData): CreateRecipeContract {
   return {

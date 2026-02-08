@@ -1,4 +1,4 @@
-import type { Ingredient } from "@/types/ingredients"
+import type { Ingredient } from "@recipes/types/ingredients"
 
 export const createIngredient = (): Ingredient => ({
   id: crypto.randomUUID(),

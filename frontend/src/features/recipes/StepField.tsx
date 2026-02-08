@@ -1,5 +1,5 @@
 import type { Control, UseFormRegister, FieldErrors } from "react-hook-form"
-import type { RecipeFormData } from "../schemas/recipe.schema"
+import type { RecipeFormData } from "@recipes/schema"
 import { useWatch } from "react-hook-form"
 
 type StepFieldProps = {
@@ -28,7 +28,6 @@ export default function StepField({
 
   return (
     <div className="relative bg-warm-50/50 border border-warm-100 rounded-xl p-5">
-      {/* Step number badge */}
       <div className="flex items-center justify-between mb-4">
         <span className="inline-flex items-center justify-center w-7 h-7 bg-warm-600 text-white text-sm font-semibold rounded-full">
           {stepNumber}
@@ -57,7 +56,6 @@ export default function StepField({
       </div>
 
       <div className="space-y-4">
-        {/* Instruction */}
         <div>
           <textarea
             {...register(`steps.${index}.instruction`)}
@@ -71,7 +69,6 @@ export default function StepField({
           )}
         </div>
 
-        {/* Optional fields in a compact row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div>
             <label className="label-field">Durée</label>
@@ -118,9 +115,7 @@ export default function StepField({
               aria-label={`Température de l'étape ${stepNumber}`}
             />
             {fieldErrors?.temperature && (
-              <p className="error-message">
-                {fieldErrors.temperature.message}
-              </p>
+              <p className="error-message">{fieldErrors.temperature.message}</p>
             )}
           </div>
 
@@ -138,7 +133,6 @@ export default function StepField({
           </div>
         </div>
 
-        {/* Note */}
         <div>
           <label className="label-field">Note (optionnel)</label>
           <input

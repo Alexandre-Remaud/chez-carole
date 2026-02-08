@@ -1,6 +1,6 @@
 import type { Control, UseFormRegister, FieldErrors } from "react-hook-form"
-import type { RecipeFormData } from "../schemas/recipe.schema"
-import { INGREDIENT_UNITS } from "../constants/ingredientUnits"
+import type { RecipeFormData } from "@recipes/schema"
+import { INGREDIENT_UNITS } from "@recipes/constants/ingredientUnits"
 
 type IngredientFieldProps = {
   index: number

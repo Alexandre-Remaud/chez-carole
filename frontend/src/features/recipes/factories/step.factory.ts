@@ -1,4 +1,4 @@
-import type { Step } from "@/types/step"
+import type { Step } from "@recipes/types/step"
 
 export function createStep(order: number = 1): Step {
   return {

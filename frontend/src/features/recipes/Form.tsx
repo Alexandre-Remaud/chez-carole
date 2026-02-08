@@ -1,65 +1,16 @@
-import { useForm, useFieldArray } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { recipeFormSchema, type RecipeFormData } from "../schemas/recipe.schema"
-
 import IngredientField from "./IngredientField"
 import StepField from "./StepField"
-import { createIngredient } from "@/factories/ingredient.factory"
-import { createStep } from "@/factories/step.factory"
-import { CATEGORIES } from "@/constants/categories"
-import { recipeService } from "@/services/recipe.service"
+import { CATEGORIES } from "@recipes/constants/categories"
+import { useRecipeForm } from "@recipes/hooks/useForm"
 
-export default function RecipeForm() {
+export default function Form() {
+  const { form, ingredients, steps, onSubmit, addIngredient, addStep } =
+    useRecipeForm()
   const {
     register,
     control,
-    handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<RecipeFormData>({
-    resolver: zodResolver(recipeFormSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      category: "main_course",
-      servings: 1,
-      prepTime: 0,
-      difficulty: "easy",
-      ingredients: [createIngredient()],
-      steps: [createStep(1)]
-    }
-  })
-
-  const {
-    fields: ingredientFields,
-    append: appendIngredient,
-    remove: removeIngredient
-  } = useFieldArray({
-    control,
-    name: "ingredients"
-  })
-
-  const {
-    fields: stepFields,
-    append: appendStep,
-    remove: removeStep
-  } = useFieldArray({
-    control,
-    name: "steps"
-  })
-
-  const onSubmit = async (data: RecipeFormData) => {
-    console.log("Données validées :", data)
-
-    try {
-      const recipe = await recipeService.createRecipe(data)
-      console.log("Recette créée :", recipe)
-
-      alert("Recette créée avec succès !")
-    } catch (error) {
-      console.error("Erreur :", error)
-      alert(error instanceof Error ? error.message : "Erreur inconnue")
-    }
-  }
+  } = form
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -72,8 +23,7 @@ export default function RecipeForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-        {/* Informations générales */}
+      <form onSubmit={onSubmit} className="space-y-10">
         <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-6">
             Informations générales
@@ -186,7 +136,6 @@ export default function RecipeForm() {
           </div>
         </section>
 
-        {/* Ingrédients */}
         <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-6">
             Ingrédients
@@ -197,22 +146,22 @@ export default function RecipeForm() {
           )}
 
           <div className="space-y-3">
-            {ingredientFields.map((field, index) => (
+            {ingredients.fields.map((field, index) => (
               <IngredientField
                 key={field.id}
                 index={index}
                 control={control}
                 register={register}
                 errors={errors}
-                onDelete={() => removeIngredient(index)}
-                canDelete={ingredientFields.length > 1}
+                onDelete={() => ingredients.remove(index)}
+                canDelete={ingredients.fields.length > 1}
               />
             ))}
           </div>
 
           <button
             type="button"
-            onClick={() => appendIngredient(createIngredient())}
+            onClick={addIngredient}
             className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-warm-700 bg-warm-50 border border-warm-200 rounded-xl hover:bg-warm-100 transition-colors"
           >
             <svg
@@ -230,7 +179,6 @@ export default function RecipeForm() {
           </button>
         </section>
 
-        {/* Étapes */}
         <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-6">
             Étapes de préparation
@@ -241,7 +189,7 @@ export default function RecipeForm() {
           )}
 
           <div className="space-y-4">
-            {stepFields.map((field, index) => (
+            {steps.fields.map((field, index) => (
               <StepField
                 key={field.id}
                 index={index}
@@ -249,15 +197,15 @@ export default function RecipeForm() {
                 control={control}
                 register={register}
                 errors={errors}
-                onDelete={() => removeStep(index)}
-                canDelete={stepFields.length > 1}
+                onDelete={() => steps.remove(index)}
+                canDelete={steps.fields.length > 1}
               />
             ))}
           </div>
 
           <button
             type="button"
-            onClick={() => appendStep(createStep(stepFields.length + 1))}
+            onClick={addStep}
             className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-warm-700 bg-warm-50 border border-warm-200 rounded-xl hover:bg-warm-100 transition-colors"
           >
             <svg
@@ -275,7 +223,6 @@ export default function RecipeForm() {
           </button>
         </section>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting}

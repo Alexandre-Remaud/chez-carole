@@ -1,5 +1,5 @@
-import type { RecipeFormData } from "@/schemas/recipe.schema"
-import toCreateRecipePayload from "@/mappers/recipe.mapper"
+import type { RecipeFormData } from "@recipes/schema"
+import toCreateRecipePayload from "@recipes/mapper"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
 

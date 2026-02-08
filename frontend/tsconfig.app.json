@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@recipes/*": ["./src/features/recipes/*"]
     },
 
     /* Bundler mode */

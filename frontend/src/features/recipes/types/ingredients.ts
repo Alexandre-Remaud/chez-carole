@@ -1,4 +1,4 @@
-import type { INGREDIENT_UNITS } from "@/constants/ingredientUnits"
+import type { INGREDIENT_UNITS } from "@recipes/constants/ingredientUnits"
 
 export type IngredientUnit = (typeof INGREDIENT_UNITS)[number]["value"]
 
