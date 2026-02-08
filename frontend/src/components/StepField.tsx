@@ -1,6 +1,27 @@
-import type { StepFieldProps } from "@/types/step"
+import type { Control, UseFormRegister, FieldErrors } from "react-hook-form"
+import type { RecipeFormData } from "../schemas/recipe.schema"
+import { useWatch } from "react-hook-form"
 
-export default function StepField({ step, setStep, onDelete }: StepFieldProps) {
+type StepFieldProps = {
+  index: number
+  control: Control<RecipeFormData>
+  register: UseFormRegister<RecipeFormData>
+  errors: FieldErrors<RecipeFormData>
+  onDelete: () => void
+}
+
+export default function StepField({
+  index,
+  control,
+  register,
+  errors,
+  onDelete
+}: StepFieldProps) {
+  const fieldErrors = errors.steps?.[index]
+
+  const duration = useWatch({ control, name: `steps.${index}.duration` })
+  const temperature = useWatch({ control, name: `steps.${index}.temperature` })
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="space-y-4">
@@ -9,14 +30,17 @@ export default function StepField({ step, setStep, onDelete }: StepFieldProps) {
             Instruction de l'étape
           </label>
           <textarea
+            {...register(`steps.${index}.instruction`)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
             placeholder="Décrivez cette étape de la recette..."
-            value={step.content}
-            onChange={(e) => setStep({ ...step, content: e.target.value })}
             rows={3}
             aria-label="Instruction de l'étape"
-            required
           />
+          {fieldErrors?.instruction && (
+            <p className="text-red-500 text-sm mt-1">
+              {fieldErrors.instruction.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-3">
@@ -32,36 +56,31 @@ export default function StepField({ step, setStep, onDelete }: StepFieldProps) {
               </label>
               <div className="flex gap-2">
                 <input
+                  {...register(`steps.${index}.duration`, {
+                    setValueAs: (v) => (v === "" ? undefined : Number(v))
+                  })}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   type="number"
                   placeholder="Durée"
-                  value={step.duration || ""}
-                  onChange={(e) =>
-                    setStep({
-                      ...step,
-                      duration: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
-                    })
-                  }
-                  min={0}
+                  min="0"
+                  step="1"
                   aria-label="Durée de l'étape"
                 />
                 <select
-                  value={step.durationUnit}
-                  onChange={(e) =>
-                    setStep({
-                      ...step,
-                      durationUnit: e.target.value as "min" | "sec"
-                    })
-                  }
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                  {...register(`steps.${index}.durationUnit`)}
+                  disabled={!duration || duration === 0}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                   aria-label="Unité de durée"
                 >
                   <option value="min">min</option>
                   <option value="sec">sec</option>
                 </select>
               </div>
+              {fieldErrors?.duration && (
+                <p className="text-red-500 text-xs mt-1">
+                  {fieldErrors.duration.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -70,56 +89,57 @@ export default function StepField({ step, setStep, onDelete }: StepFieldProps) {
               </label>
               <div className="flex gap-2">
                 <input
+                  {...register(`steps.${index}.temperature`, {
+                    setValueAs: (v) => (v === "" ? undefined : Number(v))
+                  })}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   type="number"
                   placeholder="Température"
-                  value={step.temperature || ""}
-                  onChange={(e) =>
-                    setStep({
-                      ...step,
-                      temperature: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
-                    })
-                  }
+                  min="0"
+                  step="1"
                   aria-label="Température de cuisson"
                 />
                 <select
-                  value={step.temperatureUnit}
-                  onChange={(e) =>
-                    setStep({
-                      ...step,
-                      temperatureUnit: e.target.value as "C" | "F"
-                    })
-                  }
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                  {...register(`steps.${index}.temperatureUnit`)}
+                  disabled={!temperature || temperature === 0}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                   aria-label="Unité de température"
                 >
                   <option value="C">°C</option>
                   <option value="F">°F</option>
                 </select>
               </div>
+              {fieldErrors?.temperature && (
+                <p className="text-red-500 text-xs mt-1">
+                  {fieldErrors.temperature.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Note (optionnel)
+            Note
           </label>
           <textarea
+            {...register(`steps.${index}.note`)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
             placeholder="Ajoutez une note ou un conseil..."
-            value={step.note}
-            onChange={(e) => setStep({ ...step, note: e.target.value })}
             rows={2}
             aria-label="Note optionnelle pour l'étape"
           />
+          {fieldErrors?.note && (
+            <p className="text-red-500 text-sm mt-1">
+              {fieldErrors.note.message}
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end pt-2">
           <button
-            onClick={() => onDelete(step.id)}
+            type="button"
+            onClick={onDelete}
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center gap-2 text-sm"
             aria-label="Supprimer cette étape"
           >

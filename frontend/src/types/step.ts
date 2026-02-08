@@ -1,12 +1,13 @@
 export type Step = {
   id: string
-  content: string
+  order: number
+  instruction: string
 
   duration?: number
-  durationUnit: "min" | "sec"
+  durationUnit?: "min" | "sec"
 
   temperature?: number
-  temperatureUnit: "C" | "F"
+  temperatureUnit?: "C" | "F"
 
   note?: string
 }

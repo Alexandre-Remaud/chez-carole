@@ -6,7 +6,7 @@ export type Ingredient = {
   id: string
   quantity: number
   unit: IngredientUnit
-  ingredient: string
+  name: string
 }
 
 export type IngredientFieldProps = {

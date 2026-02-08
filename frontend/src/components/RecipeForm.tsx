@@ -1,49 +1,64 @@
+import { useForm, useFieldArray } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { recipeFormSchema, type RecipeFormData } from "../schemas/recipe.schema"
+
 import IngredientField from "./IngredientField"
-import { useState } from "react"
-import type { Ingredient } from "../types/ingredients"
-import { createIngredient } from "../factories/ingredient.factory"
 import StepField from "./StepField"
-import type { Step } from "../types/step"
-import { createStep } from "../factories/step.factory"
+import { createIngredient } from "@/factories/ingredient.factory"
+import { createStep } from "@/factories/step.factory"
+import { CATEGORIES } from "@/constants/categories"
+import { recipeService } from "@/services/recipe.service"
 
 export default function RecipeForm() {
-  const [recipeName, setRecipeName] = useState("")
-  const [recipeDescription, setRecipeDescription] = useState("")
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<RecipeFormData>({
+    resolver: zodResolver(recipeFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      category: "main_course",
+      servings: 1,
+      prepTime: 0,
+      difficulty: "easy",
+      ingredients: [createIngredient()],
+      steps: [createStep(1)]
+    }
+  })
 
-  const [ingredients, setIngredients] = useState<Ingredient[]>([
-    createIngredient()
-  ])
-  const removeIngredient = (id: string) => {
-    setIngredients((prev) => prev.filter((i) => i.id !== id))
-  }
-  const updateIngredient = (updated: Ingredient) => {
-    setIngredients((prev) =>
-      prev.map((i) => (i.id === updated.id ? updated : i))
-    )
-  }
-  const addIngredient = () => {
-    setIngredients((prev) => [...prev, createIngredient()])
-  }
+  const {
+    fields: ingredientFields,
+    append: appendIngredient,
+    remove: removeIngredient
+  } = useFieldArray({
+    control,
+    name: "ingredients"
+  })
 
-  const [steps, setSteps] = useState<Step[]>([createStep()])
-  const removeStep = (id: string) => {
-    setSteps((prev) => prev.filter((s) => s.id !== id))
-  }
-  const updateStep = (updated: Step) => {
-    setSteps((prev) => prev.map((s) => (s.id === updated.id ? updated : s)))
-  }
-  const addStep = () => {
-    setSteps((prev) => [...prev, createStep()])
-  }
+  const {
+    fields: stepFields,
+    append: appendStep,
+    remove: removeStep
+  } = useFieldArray({
+    control,
+    name: "steps"
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log({
-      name: recipeName,
-      description: recipeDescription,
-      ingredients,
-      steps
-    })
+  const onSubmit = async (data: RecipeFormData) => {
+    console.log("Données validées :", data)
+
+    try {
+      const recipe = await recipeService.createRecipe(data)
+      console.log("Recette créée :", recipe)
+
+      alert("Recette créée avec succès !")
+    } catch (error) {
+      console.error("Erreur :", error)
+      alert(error instanceof Error ? error.message : "Erreur inconnue")
+    }
   }
 
   return (
@@ -52,7 +67,7 @@ export default function RecipeForm() {
         Créer une recette
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <section className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
             Informations générales
@@ -61,20 +76,22 @@ export default function RecipeForm() {
           <div>
             <label
               className="block text-sm font-medium text-gray-700 mb-2"
-              htmlFor="name"
+              htmlFor="title"
             >
               Nom de la recette
             </label>
             <input
+              {...register("title")}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               type="text"
-              id="name"
-              value={recipeName}
-              onChange={(e) => setRecipeName(e.target.value)}
+              id="title"
               placeholder="Ex: Tarte aux pommes"
-              aria-label="Nom de la recette"
-              aria-describedby="name-description"
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -85,17 +102,112 @@ export default function RecipeForm() {
               Description
             </label>
             <textarea
+              {...register("description")}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
               id="description"
               rows={3}
-              value={recipeDescription}
-              onChange={(e) => setRecipeDescription(e.target.value)}
               placeholder="Décrivez brièvement votre recette..."
-              aria-label="Description de la recette"
-              aria-describedby="description-description"
-            ></textarea>
+            />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor="servings"
+              >
+                Nombre de personnes
+              </label>
+              <input
+                {...register("servings", { valueAsNumber: true })}
+                id="servings"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                type="number"
+                min="1"
+              />
+              {errors.servings && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.servings.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor="prepTime"
+              >
+                Temps de préparation (min)
+              </label>
+              <input
+                {...register("prepTime", { valueAsNumber: true })}
+                id="prepTime"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                type="number"
+                min="0"
+              />
+              {errors.prepTime && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.prepTime.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor="difficulty"
+              >
+                Difficulté
+              </label>
+              <select
+                {...register("difficulty")}
+                id="difficulty"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              >
+                <option value="easy">Facile</option>
+                <option value="medium">Moyen</option>
+                <option value="hard">Difficile</option>
+              </select>
+              {errors.difficulty && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.difficulty.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor="category"
+              >
+                Catégorie
+              </label>
+              <select
+                {...register("category")}
+                id="category"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              >
+                {CATEGORIES.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.category.message}
+                </p>
+              )}
+            </div>
           </div>
         </section>
+
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
@@ -103,16 +215,17 @@ export default function RecipeForm() {
             </h2>
             <button
               type="button"
-              onClick={addIngredient}
+              onClick={() => appendIngredient(createIngredient())}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
-              aria-label="Ajouter un ingrédient à la liste"
             >
-              <span className="text-lg" aria-hidden="true">
-                +
-              </span>
+              <span className="text-lg">+</span>
               Ajouter un ingrédient
             </button>
           </div>
+
+          {errors.ingredients && (
+            <p className="text-red-500 text-sm">{errors.ingredients.message}</p>
+          )}
 
           <div className="grid grid-cols-12 gap-2 text-sm font-medium text-gray-600 pb-2 border-b">
             <span className="col-span-5">Ingrédient</span>
@@ -122,16 +235,19 @@ export default function RecipeForm() {
           </div>
 
           <div className="space-y-2">
-            {ingredients.map((ingredient) => (
+            {ingredientFields.map((field, index) => (
               <IngredientField
-                key={ingredient.id}
-                ingredient={ingredient}
-                setIngredient={updateIngredient}
-                onDelete={removeIngredient}
+                key={field.id}
+                index={index}
+                control={control}
+                register={register}
+                errors={errors}
+                onDelete={() => removeIngredient(index)}
               />
             ))}
           </div>
         </section>
+
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
@@ -139,28 +255,31 @@ export default function RecipeForm() {
             </h2>
             <button
               type="button"
-              onClick={addStep}
+              onClick={() => appendStep(createStep(stepFields.length + 1))}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-              aria-label="Ajouter une étape à la recette"
             >
-              <span className="text-lg" aria-hidden="true">
-                +
-              </span>
+              <span className="text-lg">+</span>
               Ajouter une étape
             </button>
           </div>
 
+          {errors.steps && (
+            <p className="text-red-500 text-sm">{errors.steps.message}</p>
+          )}
+
           <div className="space-y-4">
-            {steps.map((step, index) => (
-              <div key={step.id} className="relative">
+            {stepFields.map((field, index) => (
+              <div key={field.id} className="relative">
                 <div className="absolute left-0 top-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
                   {index + 1}
                 </div>
                 <div className="ml-12">
                   <StepField
-                    step={step}
-                    setStep={updateStep}
-                    onDelete={removeStep}
+                    index={index}
+                    control={control}
+                    register={register}
+                    errors={errors}
+                    onDelete={() => removeStep(index)}
                   />
                 </div>
               </div>
@@ -171,15 +290,10 @@ export default function RecipeForm() {
         <div className="pt-6 border-t">
           <button
             type="submit"
+            disabled={isSubmitting}
             className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
-            aria-label="Enregistrer la recette"
-            disabled={
-              !recipeName.trim() ||
-              ingredients.length === 0 ||
-              steps.length === 0
-            }
           >
-            Enregistrer la recette
+            {isSubmitting ? "Création en cours..." : "Enregistrer la recette"}
           </button>
         </div>
       </form>
