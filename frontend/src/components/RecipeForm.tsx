@@ -62,179 +62,141 @@ export default function RecipeForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        Créer une recette
-      </h1>
+    <div className="max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h2 className="font-display text-3xl font-bold text-gray-800">
+          Nouvelle recette
+        </h2>
+        <p className="text-gray-500 mt-1">
+          Remplissez les informations ci-dessous pour ajouter votre recette.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+        {/* Informations générales */}
+        <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">
             Informations générales
-          </h2>
+          </h3>
 
-          <div>
-            <label
-              className="block text-sm font-medium text-gray-700 mb-2"
-              htmlFor="title"
-            >
-              Nom de la recette
-            </label>
-            <input
-              {...register("title")}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              type="text"
-              id="title"
-              placeholder="Ex: Tarte aux pommes"
-            />
-            {errors.title && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              className="block text-sm font-medium text-gray-700 mb-2"
-              htmlFor="description"
-            >
-              Description
-            </label>
-            <textarea
-              {...register("description")}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-              id="description"
-              rows={3}
-              placeholder="Décrivez brièvement votre recette..."
-            />
-            {errors.description && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="space-y-5">
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                htmlFor="servings"
-              >
-                Nombre de personnes
+              <label className="label-field" htmlFor="title">
+                Nom de la recette
               </label>
               <input
-                {...register("servings", { valueAsNumber: true })}
-                id="servings"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                type="number"
-                min="1"
+                {...register("title")}
+                className="input-field"
+                type="text"
+                id="title"
+                placeholder="Ex : Tarte aux pommes"
               />
-              {errors.servings && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.servings.message}
-                </p>
+              {errors.title && (
+                <p className="error-message">{errors.title.message}</p>
               )}
             </div>
 
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                htmlFor="prepTime"
-              >
-                Temps de préparation (min)
+              <label className="label-field" htmlFor="description">
+                Description
               </label>
-              <input
-                {...register("prepTime", { valueAsNumber: true })}
-                id="prepTime"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                type="number"
-                min="0"
+              <textarea
+                {...register("description")}
+                className="input-field resize-none"
+                id="description"
+                rows={3}
+                placeholder="Décrivez brièvement votre recette..."
               />
-              {errors.prepTime && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.prepTime.message}
-                </p>
+              {errors.description && (
+                <p className="error-message">{errors.description.message}</p>
               )}
             </div>
 
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                htmlFor="difficulty"
-              >
-                Difficulté
-              </label>
-              <select
-                {...register("difficulty")}
-                id="difficulty"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              >
-                <option value="easy">Facile</option>
-                <option value="medium">Moyen</option>
-                <option value="hard">Difficile</option>
-              </select>
-              {errors.difficulty && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.difficulty.message}
-                </p>
-              )}
-            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <label className="label-field" htmlFor="servings">
+                  Personnes
+                </label>
+                <input
+                  {...register("servings", { valueAsNumber: true })}
+                  id="servings"
+                  className="input-field"
+                  type="number"
+                  min="1"
+                />
+                {errors.servings && (
+                  <p className="error-message">{errors.servings.message}</p>
+                )}
+              </div>
 
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                htmlFor="category"
-              >
-                Catégorie
-              </label>
-              <select
-                {...register("category")}
-                id="category"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              >
-                {CATEGORIES.map((category) => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
-              {errors.category && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.category.message}
-                </p>
-              )}
+              <div>
+                <label className="label-field" htmlFor="prepTime">
+                  Préparation (min)
+                </label>
+                <input
+                  {...register("prepTime", { valueAsNumber: true })}
+                  id="prepTime"
+                  className="input-field"
+                  type="number"
+                  min="0"
+                />
+                {errors.prepTime && (
+                  <p className="error-message">{errors.prepTime.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="label-field" htmlFor="difficulty">
+                  Difficulté
+                </label>
+                <select
+                  {...register("difficulty")}
+                  id="difficulty"
+                  className="select-field"
+                >
+                  <option value="easy">Facile</option>
+                  <option value="medium">Moyen</option>
+                  <option value="hard">Difficile</option>
+                </select>
+                {errors.difficulty && (
+                  <p className="error-message">{errors.difficulty.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="label-field" htmlFor="category">
+                  Catégorie
+                </label>
+                <select
+                  {...register("category")}
+                  id="category"
+                  className="select-field"
+                >
+                  {CATEGORIES.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.category && (
+                  <p className="error-message">{errors.category.message}</p>
+                )}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
-              Ingrédients
-            </h2>
-            <button
-              type="button"
-              onClick={() => appendIngredient(createIngredient())}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
-            >
-              <span className="text-lg">+</span>
-              Ajouter un ingrédient
-            </button>
-          </div>
+        {/* Ingrédients */}
+        <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">
+            Ingrédients
+          </h3>
 
           {errors.ingredients && (
-            <p className="text-red-500 text-sm">{errors.ingredients.message}</p>
+            <p className="error-message mb-4">{errors.ingredients.message}</p>
           )}
 
-          <div className="grid grid-cols-12 gap-2 text-sm font-medium text-gray-600 pb-2 border-b">
-            <span className="col-span-5">Ingrédient</span>
-            <span className="col-span-2">Quantité</span>
-            <span className="col-span-3">Unité</span>
-            <span className="col-span-2">Actions</span>
-          </div>
-
-          <div className="space-y-2">
+          <div className="space-y-3">
             {ingredientFields.map((field, index) => (
               <IngredientField
                 key={field.id}
@@ -243,59 +205,84 @@ export default function RecipeForm() {
                 register={register}
                 errors={errors}
                 onDelete={() => removeIngredient(index)}
+                canDelete={ingredientFields.length > 1}
               />
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={() => appendIngredient(createIngredient())}
+            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-warm-700 bg-warm-50 border border-warm-200 rounded-xl hover:bg-warm-100 transition-colors"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Ajouter un ingrédient
+          </button>
         </section>
 
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-700 border-b pb-2">
-              Étapes de préparation
-            </h2>
-            <button
-              type="button"
-              onClick={() => appendStep(createStep(stepFields.length + 1))}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-            >
-              <span className="text-lg">+</span>
-              Ajouter une étape
-            </button>
-          </div>
+        {/* Étapes */}
+        <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">
+            Étapes de préparation
+          </h3>
 
           {errors.steps && (
-            <p className="text-red-500 text-sm">{errors.steps.message}</p>
+            <p className="error-message mb-4">{errors.steps.message}</p>
           )}
 
           <div className="space-y-4">
             {stepFields.map((field, index) => (
-              <div key={field.id} className="relative">
-                <div className="absolute left-0 top-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                  {index + 1}
-                </div>
-                <div className="ml-12">
-                  <StepField
-                    index={index}
-                    control={control}
-                    register={register}
-                    errors={errors}
-                    onDelete={() => removeStep(index)}
-                  />
-                </div>
-              </div>
+              <StepField
+                key={field.id}
+                index={index}
+                stepNumber={index + 1}
+                control={control}
+                register={register}
+                errors={errors}
+                onDelete={() => removeStep(index)}
+                canDelete={stepFields.length > 1}
+              />
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={() => appendStep(createStep(stepFields.length + 1))}
+            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-warm-700 bg-warm-50 border border-warm-200 rounded-xl hover:bg-warm-100 transition-colors"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Ajouter une étape
+          </button>
         </section>
 
-        <div className="pt-6 border-t">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Création en cours..." : "Enregistrer la recette"}
-          </button>
-        </div>
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full py-4 bg-warm-600 text-white rounded-2xl hover:bg-warm-700 active:bg-warm-800 transition-colors font-semibold text-lg shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? "Enregistrement..." : "Enregistrer la recette"}
+        </button>
       </form>
     </div>
   )
