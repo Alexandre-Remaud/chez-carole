@@ -1,4 +1,5 @@
 import type { RecipeFormData } from "@recipes/schema"
+import type { Recipe } from "@recipes/contract"
 import toCreateRecipePayload from "@recipes/mapper"
 import { apiFetch } from "@/lib/api-client"
 
@@ -12,6 +13,13 @@ export const recipeService = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
+    })
+  },
+
+  async getRecipes() {
+    return apiFetch<Recipe[]>(`${API_URL}/recipes`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
     })
   }
 }
