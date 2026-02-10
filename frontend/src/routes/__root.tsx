@@ -8,7 +8,7 @@ function RootComponent() {
     <ErrorBoundary>
       <Layout />
       <Toaster
-        position="bottom-right"
+        position="top-right"
         toastOptions={{
           duration: 4000,
           style: {
