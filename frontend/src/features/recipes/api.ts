@@ -21,5 +21,12 @@ export const recipeService = {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     })
+  },
+
+  async getRecipe(id: string) {
+    return apiFetch<Recipe>(`${API_URL}/recipes/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    })
   }
 }

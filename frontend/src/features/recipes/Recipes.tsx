@@ -1,19 +1,8 @@
 import { useEffect, useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { recipeService } from "@recipes/api"
-import { CATEGORIES } from "@recipes/constants/categories"
+import RecipeBadges from "@recipes/RecipeBadges"
 import type { Recipe } from "@recipes/contract"
-
-const DIFFICULTY_LABELS: Record<string, string> = {
-  easy: "Facile",
-  medium: "Moyen",
-  hard: "Difficile"
-}
-
-function getCategoryLabel(value?: string) {
-  if (!value) return null
-  return CATEGORIES.find((c) => c.value === value)?.label ?? value
-}
 
 export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -66,38 +55,25 @@ export default function Recipes() {
 
       <ul className="grid gap-4">
         {recipes.map((recipe) => (
-          <li
-            key={recipe._id}
-            className="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <h2 className="font-display text-lg font-semibold text-gray-800 truncate">
-                  {recipe.title}
-                </h2>
-                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                  {recipe.description}
-                </p>
+          <li key={recipe._id}>
+            <Link
+              to="/recipes/$id"
+              params={{ id: recipe._id }}
+              className="block bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h2 className="font-display text-lg font-semibold text-gray-800 truncate">
+                    {recipe.title}
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                    {recipe.description}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex flex-wrap gap-2 mt-3">
-              {recipe.category && (
-                <span className="text-xs px-2.5 py-1 bg-warm-50 text-warm-700 rounded-full">
-                  {getCategoryLabel(recipe.category)}
-                </span>
-              )}
-              {recipe.difficulty && (
-                <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full">
-                  {DIFFICULTY_LABELS[recipe.difficulty] ?? recipe.difficulty}
-                </span>
-              )}
-              {recipe.servings && (
-                <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full">
-                  {recipe.servings} pers.
-                </span>
-              )}
-            </div>
+              <RecipeBadges recipe={recipe} className="mt-3" />
+            </Link>
           </li>
         ))}
       </ul>
