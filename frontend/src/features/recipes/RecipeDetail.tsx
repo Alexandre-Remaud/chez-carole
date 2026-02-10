@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react"
-import { Link, useParams } from "@tanstack/react-router"
+import { Link, useParams, useNavigate } from "@tanstack/react-router"
+import toast from "react-hot-toast"
 import { recipeService } from "@recipes/api"
 import { getUnitLabel } from "@recipes/constants/labels"
 import RecipeBadges from "@recipes/RecipeBadges"
+import ConfirmDialog from "@/components/ConfirmDialog"
 import type { Recipe } from "@recipes/contract"
 
 export default function RecipeDetail() {
   const { id } = useParams({ from: "/recipes/$id" })
+  const navigate = useNavigate()
   const [recipe, setRecipe] = useState<Recipe | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   useEffect(() => {
     recipeService
@@ -18,6 +22,19 @@ export default function RecipeDetail() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [id])
+
+  async function handleDelete() {
+    try {
+      await recipeService.deleteRecipe(id)
+      toast.success("Recette supprimée")
+      navigate({ to: "/recipes" })
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Erreur lors de la suppression"
+      )
+      setShowDeleteDialog(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -41,24 +58,50 @@ export default function RecipeDetail() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <Link
-        to="/recipes"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-warm-600 transition-colors mb-6"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          to="/recipes"
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-warm-600 transition-colors"
         >
-          <path d="m15 18-6-6 6-6" />
-        </svg>
-        Retour aux recettes
-      </Link>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+          Retour aux recettes
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => setShowDeleteDialog(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-500 hover:text-white hover:bg-red-500 border border-red-200 rounded-xl transition-colors"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+            <line x1="10" x2="10" y1="11" y2="17" />
+            <line x1="14" x2="14" y1="11" y2="17" />
+          </svg>
+          Supprimer
+        </button>
+      </div>
 
       <h1 className="font-display text-2xl font-bold text-gray-800 mb-2">
         {recipe.title}
@@ -123,6 +166,15 @@ export default function RecipeDetail() {
           ))}
         </ol>
       </section>
+
+      {showDeleteDialog && (
+        <ConfirmDialog
+          title="Supprimer la recette"
+          message="Cette action est irréversible. Voulez-vous vraiment supprimer cette recette ?"
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteDialog(false)}
+        />
+      )}
     </div>
   )
 }

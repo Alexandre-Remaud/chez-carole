@@ -28,5 +28,11 @@ export const recipeService = {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     })
+  },
+
+  async deleteRecipe(id: string) {
+    return apiFetch(`${API_URL}/recipes/${id}`, {
+      method: "DELETE"
+    })
   }
 }
