@@ -4,86 +4,125 @@ import {
   IsOptional,
   IsNumber,
   IsEnum,
+  IsNotEmpty,
+  IsUrl,
+  MaxLength,
+  Min,
+  Max,
   ValidateNested,
   ArrayMinSize
-} from "class-validator";
-import { Type } from "class-transformer";
+} from "class-validator"
+import { Type } from "class-transformer"
 
 class StepDto {
   @IsNumber()
-  order: number;
+  @Min(1)
+  order: number
 
   @IsString()
-  instruction: string;
+  @IsNotEmpty()
+  @MaxLength(2000)
+  instruction: string
 
   @IsOptional()
   @IsNumber()
-  duration?: number;
+  @Min(0)
+  duration?: number
 
   @IsOptional()
   @IsEnum(["min", "sec"])
-  durationUnit?: "min" | "sec";
+  durationUnit?: "min" | "sec"
 
   @IsOptional()
   @IsNumber()
-  temperature?: number;
+  @Min(0)
+  temperature?: number
 
   @IsOptional()
   @IsEnum(["C", "F"])
-  temperatureUnit?: "C" | "F";
+  temperatureUnit?: "C" | "F"
 
   @IsOptional()
   @IsString()
-  note?: string;
+  @MaxLength(500)
+  note?: string
 }
 
 class IngredientDto {
   @IsString()
-  name: string;
+  @IsNotEmpty()
+  @MaxLength(150)
+  name: string
 
   @IsNumber()
-  quantity: number;
+  @Min(0)
+  quantity: number
 
   @IsString()
-  unit: string;
+  @IsNotEmpty()
+  unit: string
 }
 
 export class CreateRecipeDto {
   @IsString()
-  title: string;
+  @IsNotEmpty()
+  @MaxLength(150)
+  title: string
 
   @IsString()
-  description: string;
+  @IsNotEmpty()
+  @MaxLength(2000)
+  description: string
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => IngredientDto)
   @ArrayMinSize(1)
-  ingredients: IngredientDto[];
+  ingredients: IngredientDto[]
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => StepDto)
   @ArrayMinSize(1)
-  steps: StepDto[];
+  steps: StepDto[]
 
   @IsOptional()
-  @IsString()
-  imageUrl?: string;
-
-  @IsOptional()
-  @IsNumber()
-  prepTime?: number;
+  @IsUrl()
+  imageUrl?: string
 
   @IsOptional()
   @IsNumber()
-  servings?: number;
+  @Min(0)
+  prepTime?: number
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  servings?: number
 
   @IsOptional()
   @IsEnum(["easy", "medium", "hard"])
-  difficulty?: "easy" | "medium" | "hard";
+  difficulty?: "easy" | "medium" | "hard"
 
   @IsOptional()
-  @IsString()
-  category?: string;
+  @IsEnum([
+    "appetizer",
+    "starter",
+    "main_course",
+    "side_dish",
+    "dessert",
+    "snack",
+    "beverage",
+    "sauce"
+  ])
+  category?:
+    | "appetizer"
+    | "starter"
+    | "main_course"
+    | "side_dish"
+    | "dessert"
+    | "snack"
+    | "beverage"
+    | "sauce"
 }
