@@ -35,13 +35,20 @@ export default function Layout() {
                 </span>
               </Link>
 
-              <nav>
+              <nav className="flex items-center gap-4">
                 <Link
                   to="/recipes"
                   search={{ category: "starter" }}
                   className="text-sm font-medium text-gray-600 hover:text-warm-600 transition-colors"
                 >
                   Entrées
+                </Link>
+                <Link
+                  to="/recipes"
+                  search={{ category: "main_course" }}
+                  className="text-sm font-medium text-gray-600 hover:text-warm-600 transition-colors"
+                >
+                  Plats principaux
                 </Link>
               </nav>
             </div>

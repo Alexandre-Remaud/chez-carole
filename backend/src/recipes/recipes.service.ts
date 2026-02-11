@@ -25,8 +25,9 @@ export class RecipesService {
     return this.recipeModel.create(createRecipeDto)
   }
 
-  async findAll() {
-    return this.recipeModel.find().exec()
+  async findAll(category?: string) {
+    const filter = category ? { category } : {}
+    return this.recipeModel.find(filter).exec()
   }
 
   async findOne(id: string) {
