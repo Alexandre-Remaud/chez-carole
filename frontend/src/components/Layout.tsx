@@ -50,6 +50,13 @@ export default function Layout() {
                 >
                   Plats principaux
                 </Link>
+                <Link
+                  to="/recipes"
+                  search={{ category: "dessert" }}
+                  className="text-sm font-medium text-gray-600 hover:text-warm-600 transition-colors"
+                >
+                  Desserts
+                </Link>
               </nav>
             </div>
 
