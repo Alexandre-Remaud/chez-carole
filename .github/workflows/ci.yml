@@ -10,28 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 9
+          run_install: false
 
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      - name: Lint all packages
+      - name: Lint
         run: pnpm -r run lint
 
-      - name: Run tests
+      - name: Test
         run: pnpm -r run test
 
-      - name: Build all packages
+      - name: Build
         run: pnpm -r run build
