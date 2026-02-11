@@ -2,23 +2,32 @@ import { useEffect, useState } from "react"
 import { Link } from "@tanstack/react-router"
 import toast from "react-hot-toast"
 import { recipeService } from "@recipes/api"
+import { CATEGORIES } from "@recipes/constants/categories"
 import RecipeBadges from "@recipes/RecipeBadges"
 import ConfirmDialog from "@/components/ConfirmDialog"
 import type { Recipe } from "@recipes/contract"
+import { Route } from "@/routes/recipes/index"
+
+function getPageTitle(category?: string) {
+  if (!category) return "Recettes"
+  return CATEGORIES.find((c) => c.value === category)?.label ?? "Recettes"
+}
 
 export default function Recipes() {
+  const { category } = Route.useSearch()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
+    setLoading(true)
     recipeService
-      .getRecipes()
+      .getRecipes(category)
       .then(setRecipes)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [])
+  }, [category])
 
   async function handleDelete() {
     if (!deletingId) return
@@ -69,7 +78,7 @@ export default function Recipes() {
   return (
     <div className="max-w-3xl mx-auto">
       <h1 className="font-display text-2xl font-bold text-gray-800 mb-6">
-        Recettes
+        {getPageTitle(category)}
       </h1>
 
       <ul className="grid gap-4">

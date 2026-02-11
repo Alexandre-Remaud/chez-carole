@@ -7,32 +7,44 @@ export default function Layout() {
       <div className="min-h-screen flex flex-col">
         <header className="bg-white border-b border-gray-100">
           <div className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between">
-            <Link
-              to="/"
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-            >
-              <span className="text-warm-600 text-2xl" aria-hidden="true">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+            <div className="flex items-center gap-6">
+              <Link
+                to="/"
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              >
+                <span className="text-warm-600 text-2xl" aria-hidden="true">
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M15 11h.01" />
+                    <path d="M11 15h.01" />
+                    <path d="M16 16h.01" />
+                    <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16" />
+                    <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4" />
+                  </svg>
+                </span>
+                <span className="font-display text-2xl font-bold text-gray-800">
+                  Chez Carole
+                </span>
+              </Link>
+
+              <nav>
+                <Link
+                  to="/recipes"
+                  search={{ category: "starter" }}
+                  className="text-sm font-medium text-gray-600 hover:text-warm-600 transition-colors"
                 >
-                  <path d="M15 11h.01" />
-                  <path d="M11 15h.01" />
-                  <path d="M16 16h.01" />
-                  <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16" />
-                  <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4" />
-                </svg>
-              </span>
-              <span className="font-display text-2xl font-bold text-gray-800">
-                Chez Carole
-              </span>
-            </Link>
+                  Entrées
+                </Link>
+              </nav>
+            </div>
 
             <Link
               to="/recipes/add"

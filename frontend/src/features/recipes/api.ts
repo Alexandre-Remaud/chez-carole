@@ -16,8 +16,9 @@ export const recipeService = {
     })
   },
 
-  async getRecipes() {
-    return apiFetch<Recipe[]>(`${API_URL}/recipes`, {
+  async getRecipes(category?: string) {
+    const params = category ? `?category=${category}` : ""
+    return apiFetch<Recipe[]>(`${API_URL}/recipes${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     })
