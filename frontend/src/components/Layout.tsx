@@ -1,7 +1,29 @@
+import { useState, useRef, useEffect } from "react"
 import { Link, Outlet } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 
+const MORE_CATEGORIES = [
+  { value: "appetizer", label: "Apéritifs" },
+  { value: "side_dish", label: "Accompagnements" },
+  { value: "snack", label: "Collations" },
+  { value: "beverage", label: "Boissons" },
+  { value: "sauce", label: "Sauces" },
+] as const
+
 export default function Layout() {
+  const [moreOpen, setMoreOpen] = useState(false)
+  const moreRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   return (
     <>
       <div className="min-h-screen flex flex-col">
@@ -57,6 +79,43 @@ export default function Layout() {
                 >
                   Desserts
                 </Link>
+                <div className="relative" ref={moreRef}>
+                  <button
+                    type="button"
+                    onClick={() => setMoreOpen((o) => !o)}
+                    className="text-sm font-medium text-gray-600 hover:text-warm-600 transition-colors flex items-center gap-1"
+                  >
+                    Plus
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={`transition-transform ${moreOpen ? "rotate-180" : ""}`}
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+                  {moreOpen && (
+                    <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-1 min-w-[160px] z-50">
+                      {MORE_CATEGORIES.map((cat) => (
+                        <Link
+                          key={cat.value}
+                          to="/recipes"
+                          search={{ category: cat.value }}
+                          className="block px-4 py-2 text-sm text-gray-600 hover:bg-warm-50 hover:text-warm-600 transition-colors"
+                          onClick={() => setMoreOpen(false)}
+                        >
+                          {cat.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </nav>
             </div>
 
