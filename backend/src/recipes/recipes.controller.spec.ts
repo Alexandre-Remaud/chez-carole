@@ -58,13 +58,23 @@ describe("RecipesController", () => {
   })
 
   describe("findAll", () => {
-    it("should delegate to service.findAll", async () => {
+    it("should delegate to service.findAll without category", async () => {
       const recipes = [mockRecipe]
       mockRecipesService.findAll.mockResolvedValue(recipes)
 
       const result = await controller.findAll()
 
-      expect(mockRecipesService.findAll).toHaveBeenCalled()
+      expect(mockRecipesService.findAll).toHaveBeenCalledWith(undefined)
+      expect(result).toEqual(recipes)
+    })
+
+    it("should delegate to service.findAll with category", async () => {
+      const recipes = [mockRecipe]
+      mockRecipesService.findAll.mockResolvedValue(recipes)
+
+      const result = await controller.findAll("starter")
+
+      expect(mockRecipesService.findAll).toHaveBeenCalledWith("starter")
       expect(result).toEqual(recipes)
     })
   })

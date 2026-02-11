@@ -63,7 +63,7 @@ describe("RecipesService", () => {
   })
 
   describe("findAll", () => {
-    it("should return an array of recipes", async () => {
+    it("should return all recipes when no category is provided", async () => {
       const recipes = [mockRecipe]
       mockRecipeModel.find.mockReturnValue({
         exec: jest.fn().mockResolvedValue(recipes)
@@ -71,8 +71,31 @@ describe("RecipesService", () => {
 
       const result = await service.findAll()
 
-      expect(mockRecipeModel.find).toHaveBeenCalled()
+      expect(mockRecipeModel.find).toHaveBeenCalledWith({})
       expect(result).toEqual(recipes)
+    })
+
+    it("should filter recipes by category when provided", async () => {
+      const recipes = [mockRecipe]
+      mockRecipeModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(recipes)
+      })
+
+      const result = await service.findAll("dessert")
+
+      expect(mockRecipeModel.find).toHaveBeenCalledWith({ category: "dessert" })
+      expect(result).toEqual(recipes)
+    })
+
+    it("should return empty array when no recipes match the category", async () => {
+      mockRecipeModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([])
+      })
+
+      const result = await service.findAll("beverage")
+
+      expect(mockRecipeModel.find).toHaveBeenCalledWith({ category: "beverage" })
+      expect(result).toEqual([])
     })
   })
 
