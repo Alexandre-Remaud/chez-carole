@@ -1,0 +1,9 @@
+{
+  "name": "chez-carole",
+  "private": true,
+  "scripts": {
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "build": "pnpm -r build"
+  }
+}
