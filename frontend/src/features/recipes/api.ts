@@ -1,5 +1,5 @@
 import type { RecipeFormData } from "@recipes/schema"
-import type { Recipe } from "@recipes/contract"
+import type { Recipe, PaginatedRecipes } from "@recipes/contract"
 import toCreateRecipePayload from "@recipes/mapper"
 import { apiFetch } from "@/lib/api-client"
 
@@ -16,12 +16,12 @@ export const recipeService = {
     })
   },
 
-  async getRecipes(category?: string) {
-    const params = category ? `?category=${category}` : ""
-    return apiFetch<Recipe[]>(`${API_URL}/recipes${params}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" }
-    })
+  async getRecipes(category?: string, skip = 0, limit = 20) {
+    const params = new URLSearchParams()
+    if (category) params.set("category", category)
+    params.set("skip", String(skip))
+    params.set("limit", String(limit))
+    return apiFetch<PaginatedRecipes>(`${API_URL}/recipes?${params}`)
   },
 
   async getRecipe(id: string) {

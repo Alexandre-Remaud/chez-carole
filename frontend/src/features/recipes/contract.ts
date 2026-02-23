@@ -25,6 +25,11 @@ export type Recipe = {
   updatedAt?: string;
 };
 
+export type PaginatedRecipes = {
+  data: Recipe[]
+  total: number
+}
+
 export type CreateRecipeContract = {
   title: string;
   description: string;

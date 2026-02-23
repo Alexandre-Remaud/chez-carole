@@ -23,9 +23,13 @@ export class RecipesService {
     return this.recipeModel.create(createRecipeDto)
   }
 
-  async findAll(category?: string) {
+  async findAll(category?: string, skip = 0, limit = 20) {
     const filter = category ? { category } : {}
-    return this.recipeModel.find(filter).exec()
+    const [data, total] = await Promise.all([
+      this.recipeModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
+      this.recipeModel.countDocuments(filter)
+    ])
+    return { data, total }
   }
 
   async findOne(id: string) {

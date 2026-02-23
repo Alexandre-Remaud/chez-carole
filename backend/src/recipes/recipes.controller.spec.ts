@@ -14,6 +14,8 @@ const mockRecipe = {
   steps: [{ order: 1, instruction: "Éplucher les pommes" }]
 }
 
+const paginatedResult = { data: [mockRecipe], total: 1 }
+
 const mockRecipesService = {
   create: jest.fn(),
   findAll: jest.fn(),
@@ -58,24 +60,37 @@ describe("RecipesController", () => {
   })
 
   describe("findAll", () => {
-    it("should delegate to service.findAll without category", async () => {
-      const recipes = [mockRecipe]
-      mockRecipesService.findAll.mockResolvedValue(recipes)
+    it("should call service.findAll with defaults when no params", async () => {
+      mockRecipesService.findAll.mockResolvedValue(paginatedResult)
 
       const result = await controller.findAll()
 
-      expect(mockRecipesService.findAll).toHaveBeenCalledWith(undefined)
-      expect(result).toEqual(recipes)
+      expect(mockRecipesService.findAll).toHaveBeenCalledWith(undefined, 0, 20)
+      expect(result).toEqual(paginatedResult)
     })
 
-    it("should delegate to service.findAll with category", async () => {
-      const recipes = [mockRecipe]
-      mockRecipesService.findAll.mockResolvedValue(recipes)
+    it("should call service.findAll with category", async () => {
+      mockRecipesService.findAll.mockResolvedValue(paginatedResult)
 
-      const result = await controller.findAll("starter")
+      await controller.findAll("dessert")
 
-      expect(mockRecipesService.findAll).toHaveBeenCalledWith("starter")
-      expect(result).toEqual(recipes)
+      expect(mockRecipesService.findAll).toHaveBeenCalledWith("dessert", 0, 20)
+    })
+
+    it("should parse skip and limit query params", async () => {
+      mockRecipesService.findAll.mockResolvedValue(paginatedResult)
+
+      await controller.findAll(undefined, "20", "10")
+
+      expect(mockRecipesService.findAll).toHaveBeenCalledWith(undefined, 20, 10)
+    })
+
+    it("should combine category, skip and limit", async () => {
+      mockRecipesService.findAll.mockResolvedValue(paginatedResult)
+
+      await controller.findAll("starter", "40", "20")
+
+      expect(mockRecipesService.findAll).toHaveBeenCalledWith("starter", 40, 20)
     })
   })
 

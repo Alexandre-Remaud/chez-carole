@@ -8,6 +8,8 @@ import ConfirmDialog from "@/components/ConfirmDialog"
 import type { Recipe } from "@recipes/contract"
 import { Route } from "@/routes/recipes/index"
 
+const LIMIT = 20
+
 function getPageTitle(category?: string) {
   if (!category) return "Recettes"
   return CATEGORIES.find((c) => c.value === category)?.label ?? "Recettes"
@@ -16,18 +18,47 @@ function getPageTitle(category?: string) {
 export default function Recipes() {
   const { category } = Route.useSearch()
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [total, setTotal] = useState(0)
+  const [skip, setSkip] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
+    setRecipes([])
+    setSkip(0)
+    setTotal(0)
     recipeService
-      .getRecipes(category)
-      .then(setRecipes)
+      .getRecipes(category, 0)
+      .then(({ data, total }) => {
+        setRecipes(data)
+        setTotal(total)
+        setSkip(LIMIT)
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [category])
+
+  async function handleLoadMore() {
+    setLoadingMore(true)
+    try {
+      const { data, total: newTotal } = await recipeService.getRecipes(
+        category,
+        skip
+      )
+      setRecipes((prev) => [...prev, ...data])
+      setTotal(newTotal)
+      setSkip((prev) => prev + LIMIT)
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Erreur lors du chargement"
+      )
+    } finally {
+      setLoadingMore(false)
+    }
+  }
 
   async function handleDelete() {
     if (!deletingId) return
@@ -35,6 +66,7 @@ export default function Recipes() {
     try {
       await recipeService.deleteRecipe(deletingId)
       setRecipes((prev) => prev.filter((r) => r._id !== deletingId))
+      setTotal((prev) => prev - 1)
       toast.success("Recette supprimée")
     } catch (err) {
       toast.error(
@@ -74,6 +106,8 @@ export default function Recipes() {
       </div>
     )
   }
+
+  const hasMore = recipes.length < total
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -132,6 +166,19 @@ export default function Recipes() {
           </li>
         ))}
       </ul>
+
+      {hasMore && (
+        <div className="mt-8 text-center">
+          <button
+            type="button"
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-warm-700 bg-warm-50 border border-warm-200 rounded-xl hover:bg-warm-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loadingMore ? "Chargement..." : "Voir plus"}
+          </button>
+        </div>
+      )}
 
       {deletingId && (
         <ConfirmDialog

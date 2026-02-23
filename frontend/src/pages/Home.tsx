@@ -17,10 +17,10 @@ export default function Home() {
 
   useEffect(() => {
     recipeService
-      .getRecipes()
-      .then((data) => {
-        setTotal(data.length)
-        setRecipes(data.slice(0, HOME_LIMIT))
+      .getRecipes(undefined, 0, HOME_LIMIT)
+      .then(({ data, total }) => {
+        setTotal(total)
+        setRecipes(data)
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))

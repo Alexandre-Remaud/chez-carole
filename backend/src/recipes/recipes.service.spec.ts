@@ -19,9 +19,22 @@ const mockRecipe = {
   category: "dessert" as const
 }
 
+const mockLimitFn = jest.fn()
+const mockSkipFn = jest.fn()
+
+const mockSortFn = jest.fn()
+
+function mockFind(results: unknown[]) {
+  mockLimitFn.mockReturnValue({ exec: jest.fn().mockResolvedValue(results) })
+  mockSkipFn.mockReturnValue({ limit: mockLimitFn })
+  mockSortFn.mockReturnValue({ skip: mockSkipFn })
+  return { sort: mockSortFn }
+}
+
 const mockRecipeModel = {
   create: jest.fn(),
   find: jest.fn(),
+  countDocuments: jest.fn(),
   findById: jest.fn(),
   findByIdAndUpdate: jest.fn(),
   findByIdAndDelete: jest.fn()
@@ -43,6 +56,9 @@ describe("RecipesService", () => {
 
     service = module.get<RecipesService>(RecipesService)
     jest.clearAllMocks()
+    mockSortFn.mockReset()
+    mockSkipFn.mockReset()
+    mockLimitFn.mockReset()
   })
 
   describe("create", () => {
@@ -63,43 +79,49 @@ describe("RecipesService", () => {
   })
 
   describe("findAll", () => {
-    it("should return all recipes when no category is provided", async () => {
+    it("should return paginated recipes with total when no category", async () => {
       const recipes = [mockRecipe]
-      mockRecipeModel.find.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(recipes)
-      })
+      mockRecipeModel.find.mockReturnValue(mockFind(recipes))
+      mockRecipeModel.countDocuments.mockResolvedValue(1)
 
       const result = await service.findAll()
 
       expect(mockRecipeModel.find).toHaveBeenCalledWith({})
-      expect(result).toEqual(recipes)
+      expect(mockRecipeModel.countDocuments).toHaveBeenCalledWith({})
+      expect(result).toEqual({ data: recipes, total: 1 })
     })
 
-    it("should filter recipes by category when provided", async () => {
+    it("should filter by category and return paginated result", async () => {
       const recipes = [mockRecipe]
-      mockRecipeModel.find.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(recipes)
-      })
+      mockRecipeModel.find.mockReturnValue(mockFind(recipes))
+      mockRecipeModel.countDocuments.mockResolvedValue(1)
 
       const result = await service.findAll("dessert")
 
-      expect(mockRecipeModel.find).toHaveBeenCalledWith({
+      expect(mockRecipeModel.find).toHaveBeenCalledWith({ category: "dessert" })
+      expect(mockRecipeModel.countDocuments).toHaveBeenCalledWith({
         category: "dessert"
       })
-      expect(result).toEqual(recipes)
+      expect(result).toEqual({ data: recipes, total: 1 })
     })
 
-    it("should return empty array when no recipes match the category", async () => {
-      mockRecipeModel.find.mockReturnValue({
-        exec: jest.fn().mockResolvedValue([])
-      })
+    it("should apply skip and limit", async () => {
+      mockRecipeModel.find.mockReturnValue(mockFind([]))
+      mockRecipeModel.countDocuments.mockResolvedValue(50)
+
+      await service.findAll(undefined, 20, 20)
+
+      expect(mockSkipFn).toHaveBeenCalledWith(20)
+      expect(mockLimitFn).toHaveBeenCalledWith(20)
+    })
+
+    it("should return empty data when no recipes match", async () => {
+      mockRecipeModel.find.mockReturnValue(mockFind([]))
+      mockRecipeModel.countDocuments.mockResolvedValue(0)
 
       const result = await service.findAll("beverage")
 
-      expect(mockRecipeModel.find).toHaveBeenCalledWith({
-        category: "beverage"
-      })
-      expect(result).toEqual([])
+      expect(result).toEqual({ data: [], total: 0 })
     })
   })
 

@@ -22,8 +22,16 @@ export class RecipesController {
   }
 
   @Get()
-  findAll(@Query("category") category?: string) {
-    return this.recipesService.findAll(category)
+  findAll(
+    @Query("category") category?: string,
+    @Query("skip") skip?: string,
+    @Query("limit") limit?: string
+  ) {
+    return this.recipesService.findAll(
+      category,
+      skip ? parseInt(skip, 10) : 0,
+      limit ? parseInt(limit, 10) : 20
+    )
   }
 
   @Get(":id")

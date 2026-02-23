@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { recipeService } from "./api"
-import type { Recipe } from "./contract"
+import type { Recipe, PaginatedRecipes } from "./contract"
 
 const mockRecipe: Recipe = {
   _id: "abc123",
@@ -13,6 +13,78 @@ const mockRecipe: Recipe = {
   difficulty: "easy",
   category: "dessert"
 }
+
+const mockPaginated: PaginatedRecipes = {
+  data: [mockRecipe],
+  total: 1
+}
+
+describe("recipeService.getRecipes", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it("should call GET /recipes with default skip=0 and limit=20", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(mockPaginated), { status: 200 })
+    )
+
+    const result = await recipeService.getRecipes()
+
+    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(url).toContain("skip=0")
+    expect(url).toContain("limit=20")
+    expect(result).toEqual(mockPaginated)
+  })
+
+  it("should include category in query params when provided", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(mockPaginated), { status: 200 })
+    )
+
+    await recipeService.getRecipes("dessert")
+
+    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(url).toContain("category=dessert")
+    expect(url).toContain("skip=0")
+  })
+
+  it("should pass skip when provided", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(mockPaginated), { status: 200 })
+    )
+
+    await recipeService.getRecipes(undefined, 20)
+
+    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(url).toContain("skip=20")
+    expect(url).not.toContain("category=")
+  })
+
+  it("should combine category and skip", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(mockPaginated), { status: 200 })
+    )
+
+    await recipeService.getRecipes("dessert", 40)
+
+    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(url).toContain("category=dessert")
+    expect(url).toContain("skip=40")
+    expect(url).toContain("limit=20")
+  })
+
+  it("should use custom limit when provided", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(mockPaginated), { status: 200 })
+    )
+
+    await recipeService.getRecipes(undefined, 0, 10)
+
+    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(url).toContain("limit=10")
+  })
+})
 
 describe("recipeService.updateRecipe", () => {
   beforeEach(() => {
