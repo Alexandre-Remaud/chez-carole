@@ -92,25 +92,18 @@ export class AuthService {
     return storedToken as unknown as RefreshTokenDocument
   }
 
-  private sanitizeUser(user: UserDocument | Record<string, unknown>) {
-    const obj = "toObject" in user ? user.toObject() : { ...user }
+  private sanitizeUser(user: UserDocument): Record<string, unknown> {
+    const obj = user.toObject() as Record<string, unknown>
     delete obj.password
     delete obj.__v
     return obj
   }
 
-  private buildPayload(
-    user: UserDocument | Record<string, unknown>
-  ): JwtPayload {
-    const userObj =
-      "toObject" in user ? (user as UserDocument).toObject() : user
-    const id = userObj._id as string | undefined
-    const email = userObj.email as string | undefined
-    const sub = id ?? (userObj as JwtPayload).sub
+  private buildPayload(user: UserDocument): JwtPayload {
     return {
-      sub,
-      email: email ?? (userObj as JwtPayload).email,
-      role: (userObj.role || (userObj as JwtPayload).role) as Role
+      sub: user._id.toString(),
+      email: user.email,
+      role: user.role
     }
   }
 
@@ -133,7 +126,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const email = String(loginDto.email).toLowerCase().trim()
-    const user = await this.userModel.findOne({ email }).lean()
+    const user = await this.userModel.findOne({ email })
     if (!user) {
       throw new UnauthorizedException("Identifiants invalides")
     }
@@ -150,7 +143,7 @@ export class AuthService {
   }
 
   private async generateAuthResponse(user: UserDocument): Promise<{
-    user: ReturnType<AuthService["sanitizeUser"]>
+    user: Record<string, unknown>
     accessToken: string
     refreshToken: string
   }> {
@@ -183,7 +176,7 @@ export class AuthService {
       throw new UnauthorizedException("Refresh token invalide ou expiré")
     }
 
-    const user = await this.userModel.findById(storedToken.userId).lean()
+    const user = await this.userModel.findById(storedToken.userId)
     if (!user) {
       throw new UnauthorizedException("Utilisateur non trouvé")
     }
