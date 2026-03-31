@@ -31,6 +31,14 @@ export const authApi = {
     return response
   },
 
+  async refresh() {
+    const response = await apiFetch<{ message: string }>(`${API_URL}/auth/refresh`, {
+      method: "POST",
+      credentials: "include"
+    })
+    return response
+  },
+
   async logout() {
     await apiFetch<{ message: string }>(`${API_URL}/auth/logout`, {
       method: "POST",
