@@ -93,7 +93,7 @@ export class AuthService {
   }
 
   private sanitizeUser(user: UserDocument): SafeUser {
-    const { password: _, __v: _2, ...rest } = user.toObject()
+    const { password: _password, __v: _v, ...rest } = user.toObject()
     return rest
   }
 
