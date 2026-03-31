@@ -87,11 +87,9 @@ export class AuthService {
     return storedToken as unknown as RefreshTokenDocument
   }
 
-  private sanitizeUser(user: UserDocument): Record<string, unknown> {
-    const obj = user.toObject() as unknown as Record<string, unknown>
-    delete obj.password
-    delete obj.__v
-    return obj
+  private sanitizeUser(user: UserDocument) {
+    const { password, __v, ...rest } = user.toObject()
+    return rest
   }
 
   private buildPayload(user: UserDocument): JwtPayload {
