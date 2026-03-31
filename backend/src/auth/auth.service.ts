@@ -7,7 +7,6 @@ import { JwtService } from "@nestjs/jwt"
 import { InjectModel } from "@nestjs/mongoose"
 import { Model } from "mongoose"
 import * as bcrypt from "bcrypt"
-import * as crypto from "crypto"
 import { User, UserDocument } from "../users/entities/user.entity"
 import {
   RefreshToken,
@@ -39,10 +38,6 @@ export class AuthService {
     private refreshTokenModel: Model<RefreshTokenDocument>,
     private jwtService: JwtService
   ) {}
-
-  private generateRefreshToken(): string {
-    return crypto.randomBytes(64).toString("hex")
-  }
 
   private getRefreshTokenExpiry(): Date {
     const date = new Date()
