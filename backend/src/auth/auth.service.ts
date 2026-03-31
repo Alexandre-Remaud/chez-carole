@@ -26,17 +26,16 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.userModel.findOne({
-      email: registerDto.email
-    })
+    const email = String(registerDto.email).toLowerCase().trim()
+    const existingUser = await this.userModel.exists({ email }).lean()
     if (existingUser) {
       throw new ConflictException("Email already registered")
     }
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 10)
     const user = await this.userModel.create({
-      email: registerDto.email,
-      name: registerDto.name,
+      email,
+      name: registerDto.name.trim(),
       password: hashedPassword
     })
 
@@ -53,7 +52,8 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.userModel.findOne({ email: loginDto.email })
+    const email = String(loginDto.email).toLowerCase().trim()
+    const user = await this.userModel.findOne({ email }).lean()
     if (!user) {
       throw new UnauthorizedException("Invalid credentials")
     }
