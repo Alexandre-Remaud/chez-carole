@@ -88,7 +88,8 @@ export class AuthService {
   }
 
   private sanitizeUser(user: UserDocument) {
-    const { password, __v, ...rest } = user.toObject()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, __v: _2, ...rest } = user.toObject()
     return rest
   }
 
