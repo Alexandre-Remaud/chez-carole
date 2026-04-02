@@ -76,7 +76,10 @@ describe("RecipesService", () => {
       const result = await service.create(dto, userId)
 
       expect(mockRecipeModel.create).toHaveBeenCalled()
-      const callArgs = mockRecipeModel.create.mock.calls[0][0]
+      const calls = mockRecipeModel.create.mock.calls as unknown as Array<
+        [{ title: string; description: string; userId?: unknown }]
+      >
+      const callArgs = calls[0][0]
       expect(callArgs.title).toBe(dto.title)
       expect(callArgs.description).toBe(dto.description)
       expect(callArgs.userId).toBeDefined()

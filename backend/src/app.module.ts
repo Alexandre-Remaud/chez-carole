@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 import { MongooseModule } from "@nestjs/mongoose"
 import { ConfigModule, ConfigService } from "@nestjs/config"
 import { APP_GUARD } from "@nestjs/core"
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
 import { RecipesModule } from "./recipes/recipes.module"
 import { AuthModule } from "./auth/auth.module"
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard"
@@ -11,6 +12,18 @@ import { validate } from "./config/env.validation"
 @Module({
   imports: [
     ConfigModule.forRoot({ validate, isGlobal: true }),
+    ThrottlerModule.forRoot([
+      {
+        name: "default",
+        ttl: 60000,
+        limit: 100
+      },
+      {
+        name: "auth",
+        ttl: 60000,
+        limit: 10
+      }
+    ]),
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>("MONGO_URI")
@@ -21,6 +34,10 @@ import { validate } from "./config/env.validation"
     RecipesModule
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard

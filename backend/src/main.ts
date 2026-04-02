@@ -6,18 +6,35 @@ import { ValidationPipe } from "@nestjs/common"
 import { Response } from "express"
 import cookieParser from "cookie-parser"
 
+const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000
+const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000
+
 export function setAuthCookies(res: Response, accessToken: string) {
   res.cookie("access_token", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: ACCESS_TOKEN_MAX_AGE,
     path: "/"
   })
 }
 
 export function clearAuthCookies(res: Response) {
   res.clearCookie("access_token", { path: "/" })
+}
+
+export function setRefreshCookie(res: Response, refreshToken: string) {
+  res.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: REFRESH_TOKEN_MAX_AGE,
+    path: "/"
+  })
+}
+
+export function clearRefreshCookie(res: Response) {
+  res.clearCookie("refresh_token", { path: "/" })
 }
 
 async function bootstrap() {
@@ -48,4 +65,4 @@ async function bootstrap() {
     process.exit(1)
   }
 }
-bootstrap()
+void bootstrap()
