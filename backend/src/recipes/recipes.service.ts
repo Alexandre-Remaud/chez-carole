@@ -52,6 +52,9 @@ export class RecipesService {
   }
 
   async findAll(category?: string, search?: string, skip = 0, limit = 20) {
+    const safeSkip = Math.max(0, skip)
+    const safeLimit = Math.min(Math.max(1, limit), 100)
+
     const filter: Record<string, unknown> = {}
     if (category) filter.category = category
     if (search) {
@@ -62,8 +65,8 @@ export class RecipesService {
       this.recipeModel
         .find(filter)
         .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
+        .skip(safeSkip)
+        .limit(safeLimit)
         .exec(),
       this.recipeModel.countDocuments(filter)
     ])
