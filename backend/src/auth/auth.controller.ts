@@ -8,7 +8,7 @@ import {
   Get,
   Req
 } from "@nestjs/common"
-import { Throttle, SkipThrottle } from "@nestjs/throttler"
+import { Throttle } from "@nestjs/throttler"
 import type { Response, Request } from "express"
 import { AuthService } from "./auth.service"
 import { RegisterDto } from "./dto/register.dto"
@@ -24,7 +24,6 @@ import {
 import type { JwtPayload } from "./auth.service"
 
 @Controller("auth")
-@SkipThrottle()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
