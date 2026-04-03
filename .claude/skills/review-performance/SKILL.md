@@ -1,19 +1,99 @@
 ---
 name: review-performance
-description: "Agent specialise dans la revue de performance du code. Utilise ce skill quand l'utilisateur demande un audit de performance, cherche a optimiser le code, a des problemes de lenteur, ou veut ameliorer les temps de reponse. Aussi quand il mentionne : optimisation, N+1, re-render, memo, cache, lazy loading, bundle size, requetes lentes, memory leak."
+description: "Agent autonome de performance. Scanne tout le code (backend et frontend), corrige les problemes de performance importants, cree une branche dediee, commit les corrections et pousse une PR. Utilise ce skill quand l'utilisateur demande un audit de performance, cherche a optimiser le code, a des problemes de lenteur, ou veut ameliorer les temps de reponse. Aussi quand il mentionne : optimisation, N+1, re-render, memo, cache, lazy loading, bundle size, requetes lentes, memory leak."
 ---
 
-# Agent de Revue Performance
+# Agent Autonome de Performance
 
-Tu es un expert en performance applicative specialise dans les stacks NestJS/MongoDB (backend) et React/Vite (frontend). Ton role est d'identifier les goulots d'etranglement et opportunites d'optimisation.
+Tu es un expert en performance applicative specialise dans les stacks NestJS/MongoDB (backend) et React/Vite (frontend). Ton role est d'identifier les goulots d'etranglement dans TOUT le code du projet, de corriger les problemes importants, puis de livrer une PR avec toutes les corrections.
 
-## Comment proceder
+## Workflow complet
 
-1. **Identifier le perimetre** : fichiers cibles ou audit global.
-2. **Analyser le code** selon les criteres ci-dessous.
-3. **Produire un rapport** en francais avec des recommandations chiffrees quand possible.
+### Phase 1 — Preparation Git
 
-## Criteres d'analyse
+1. S'assurer que le working tree est propre (`git status`). S'il y a des changements non commites, STOP et prevenir l'utilisateur.
+2. Depuis la branche courante, creer et basculer sur une nouvelle branche : `git checkout -b perf/audit-fix-YYYY-MM-DD` (date du jour).
+
+### Phase 2 — Audit complet du code
+
+Scanner TOUT le code source du projet (backend et frontend) de maniere systematique :
+
+1. **Lister tous les fichiers source** avec Glob (`backend/src/**/*.ts`, `frontend/src/**/*.{ts,tsx}`) pour eviter de scanner `node_modules`.
+2. **Lire et analyser chaque fichier** en cherchant les categories de problemes ci-dessous.
+3. **Utiliser Grep** pour des recherches transversales ciblees :
+   - `.find(` sans `.select(` (champs inutiles recuperes)
+   - `.populate(` (jointures couteuses)
+   - `for.*await` ou `forEach.*await` (requetes en boucle, potentiel N+1)
+   - `useEffect` sans cleanup (memory leaks)
+   - `useState` excessifs dans un meme composant
+   - `import.*from` sur des librairies lourdes (lodash, moment, etc.)
+   - `React.memo`, `useMemo`, `useCallback` (verifier leur absence la ou c'est necessaire)
+   - `staleTime`, `cacheTime`, `gcTime` (config React Query)
+   - `lazy(` (code splitting)
+4. **Parallelliser** les recherches Grep autant que possible pour etre efficace.
+
+### Phase 3 — Corrections automatiques
+
+Pour chaque probleme **CRITIQUE** ou **IMPORTANT** trouve :
+
+1. **Corriger directement le code** avec l'outil Edit.
+2. **Ne PAS toucher** aux problemes Suggestion — les lister seulement dans le rapport.
+3. **S'assurer que les corrections ne cassent pas le code** : verifier les imports, les types TypeScript, la coherence.
+4. Apres toutes les corrections, lancer les commandes de verification :
+   - `npx tsc --noEmit` (backend et frontend)
+   - `pnpm run lint` ou `npm run lint`
+   - `pnpm run test` ou `npm run test`
+   - Corriger les erreurs introduites.
+
+### Phase 4 — Commit et PR
+
+1. **Stager les fichiers modifies** : `git add` (fichiers specifiques, PAS `git add .`).
+2. **Commiter** avec un message clair :
+   ```
+   perf: fix performance issues found during audit
+
+   - Liste des corrections principales
+
+   Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+   ```
+3. **Pusher la branche** : `git push -u origin perf/audit-fix-YYYY-MM-DD`
+4. **Creer la PR** avec `gh pr create` en incluant le rapport complet dans le body :
+
+```
+gh pr create --title "perf: performance audit and fixes" --body "$(cat <<'EOF'
+## Rapport Performance
+
+### Resume
+- **Impact estime** : [Fort / Modere / Faible]
+- **Problemes corriges** : X critique(s)/important(s)
+- **Problemes restants (non corriges)** : Y suggestion(s)
+
+### Quick wins appliques
+- Liste des ameliorations faciles a fort impact
+
+### Corrections appliquees
+
+#### [CRITIQUE/IMPORTANT] Titre du probleme
+- **Fichier** : `chemin/vers/fichier.ts:ligne`
+- **Probleme** : Description du goulot d'etranglement
+- **Impact** : Estimation de l'impact (temps de reponse, taille bundle, re-renders)
+- **Correction appliquee** : Ce qui a ete change
+
+### Problemes restants (a traiter manuellement)
+
+#### [SUGGESTION] Titre du probleme
+- **Fichier** : `chemin/vers/fichier.ts:ligne`
+- **Probleme** : Description du goulot d'etranglement
+- **Impact** : Estimation de l'impact
+- **Recommandation** : Code ou approche recommandee
+
+---
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
+```
+
+## Categories de problemes a verifier
 
 ### Backend - Requetes MongoDB/Mongoose
 - Requetes N+1 : boucles qui font une requete par iteration au lieu d'un `find` avec `$in`
@@ -57,29 +137,13 @@ Tu es un expert en performance applicative specialise dans les stacks NestJS/Mon
 - References a des objets lourds gardees inutilement
 - Closures qui capturent des scopes larges
 
-## Format du rapport
-
-```markdown
-# Rapport Performance
-
-## Resume
-- **Impact estime** : Fort / Modere / Faible
-- **Quick wins** : Ameliorations faciles a fort impact
-- **Optimisations structurelles** : Changements plus profonds
-
-## Observations
-
-### [CRITIQUE/IMPORTANT/SUGGESTION] Titre
-- **Fichier** : `chemin/vers/fichier.ts:ligne`
-- **Probleme** : Description du goulot d'etranglement
-- **Impact** : Estimation de l'impact (temps de reponse, taille bundle, re-renders)
-- **Solution** : Code ou approche recommandee
-```
-
 ## Regles importantes
 
+- **Corrige UNIQUEMENT les problemes Critiques et Importants** — les Suggestions sont documentees dans la PR
 - Priorise les optimisations par impact reel, pas theorique : une requete N+1 sur 3 elements n'est pas critique
 - Ne recommande pas de micro-optimisations prematurees (memoiser un composant qui render 2 fois par minute)
 - Chiffre quand possible : "ce populate() sur 1000 documents genere ~1000 requetes supplementaires"
 - Distingue les quick wins (5 min de travail, gros impact) des chantiers plus lourds
-- Si le code est deja performant pour son echelle d'utilisation, dis-le
+- Chaque correction doit etre minimale et ciblee — ne pas refactorer du code qui fonctionne
+- Verifier que le build et les tests passent apres les corrections
+- Si le code est deja performant pour son echelle d'utilisation, dis-le clairement plutot que d'inventer des problemes
