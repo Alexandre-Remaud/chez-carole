@@ -18,11 +18,6 @@ import { validate } from "./config/env.validation"
         name: "default",
         ttl: 60000,
         limit: 100
-      },
-      {
-        name: "auth",
-        ttl: 60000,
-        limit: 10
       }
     ]),
     MongooseModule.forRootAsync({
