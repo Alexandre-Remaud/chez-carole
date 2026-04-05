@@ -90,6 +90,6 @@ export class AuthController {
 
   @Get("me")
   getProfile(@CurrentUser() user: JwtPayload) {
-    return { id: user.sub, email: user.email, role: user.role }
+    return { id: user.sub, email: user.email, name: user.name, role: user.role }
   }
 }

@@ -19,6 +19,7 @@ import { Role } from "./role.enum"
 export interface JwtPayload {
   sub: string
   email: string
+  name: string
   role: Role
 }
 
@@ -102,6 +103,7 @@ export class AuthService {
     return {
       sub: user._id.toString(),
       email: user.email,
+      name: user.name,
       role: user.role
     }
   }
