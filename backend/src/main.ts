@@ -58,7 +58,10 @@ async function bootstrap() {
     credentials: true
   })
 
-  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")))
+  app.use("/uploads", (_req, res, next) => {
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin")
+    next()
+  }, express.static(path.join(process.cwd(), "uploads")))
 
   const port = configService.get<number>("PORT", 3000)
   try {
