@@ -34,7 +34,7 @@ export class LocalStorageService implements StorageService {
     const thumbnailName = `${publicId}-thumbnail${ext}`
     const mediumName = `${publicId}-medium${ext}`
 
-    const image = sharp(buffer)
+    const image = sharp(buffer).rotate()
 
     await Promise.all([
       image.clone().toFile(path.join(this.uploadDir, originalName)),
