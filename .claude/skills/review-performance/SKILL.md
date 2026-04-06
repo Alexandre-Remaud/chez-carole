@@ -41,8 +41,8 @@ Pour chaque probleme **CRITIQUE** ou **IMPORTANT** trouve :
 3. **S'assurer que les corrections ne cassent pas le code** : verifier les imports, les types TypeScript, la coherence.
 4. Apres toutes les corrections, lancer les commandes de verification :
    - `npx tsc --noEmit` (backend et frontend)
-   - `pnpm run lint` ou `npm run lint`
-   - `pnpm run test` ou `npm run test`
+   - `pnpm lint`
+   - `pnpm test`
    - Corriger les erreurs introduites.
 
 ### Phase 4 — Commit et PR
