@@ -42,11 +42,7 @@ describe("UsersController", () => {
 
       const result = await controller.getUserRecipes("user-id", "10", "5")
 
-      expect(usersService.getUserRecipes).toHaveBeenCalledWith(
-        "user-id",
-        10,
-        5
-      )
+      expect(usersService.getUserRecipes).toHaveBeenCalledWith("user-id", 10, 5)
       expect(result).toEqual(recipes)
     })
 
@@ -55,11 +51,7 @@ describe("UsersController", () => {
 
       await controller.getUserRecipes("user-id")
 
-      expect(usersService.getUserRecipes).toHaveBeenCalledWith(
-        "user-id",
-        0,
-        20
-      )
+      expect(usersService.getUserRecipes).toHaveBeenCalledWith("user-id", 0, 20)
     })
   })
 
