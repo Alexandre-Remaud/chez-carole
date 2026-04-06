@@ -42,7 +42,7 @@ L'agent doit :
    - Composants React (pages + composants reutilisables)
    - Routes TanStack Router
    - Integration dans la navigation
-6. Verifier que le build passe : `cd backend && npx tsc --noEmit` et `cd frontend && npx tsc --noEmit`
+6. Verifier que le build et le lint passent : `cd backend && npx tsc --noEmit` et `cd frontend && npx tsc --noEmit`, puis `pnpm lint` depuis la racine
 7. Commiter avec un message descriptif :
    ```
    feat([scope]): implement [feature name]
@@ -79,7 +79,7 @@ L'agent doit :
    - Tester les composants (rendu, interactions, etats loading/error/empty)
    - Tester les hooks custom (renderHook)
    - Tester les schemas Zod (valide/invalide)
-5. Lancer les tests : `cd backend && npx jest --passWithNoTests 2>&1` et `cd frontend && npx vitest run 2>&1`
+5. Lancer les tests : `pnpm test` depuis la racine
 6. Corriger les tests qui echouent — un test rouge n'est pas livre
 7. Commiter :
    ```
@@ -117,8 +117,8 @@ L'agent doit :
 6. **Verifier** apres corrections :
    - `cd backend && npx tsc --noEmit`
    - `cd frontend && npx tsc --noEmit`
-   - `cd backend && npx jest --passWithNoTests 2>&1`
-   - `cd frontend && npx vitest run 2>&1`
+   - `pnpm lint`
+   - `pnpm test`
 7. Si des corrections ont ete faites, commiter :
    ```
    fix([scope]): address review issues for [feature name]

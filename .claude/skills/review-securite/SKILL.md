@@ -37,7 +37,11 @@ Pour chaque probleme **CRITIQUE** ou **ELEVE** trouve :
 1. **Corriger directement le code** avec l'outil Edit.
 2. **Ne PAS toucher** aux problemes Moderes ou Faibles — les lister seulement dans le rapport.
 3. **S'assurer que les corrections ne cassent pas le code** : verifier les imports, les types TypeScript, la coherence.
-4. Apres toutes les corrections, lancer les commandes de verification si disponibles (`npm run build`, `npm run lint`, `npx tsc --noEmit`) et corriger les erreurs introduites.
+4. Apres toutes les corrections, lancer les commandes de verification :
+   - `npx tsc --noEmit` (backend et frontend)
+   - `pnpm lint`
+   - `pnpm test`
+   - Corriger les erreurs introduites.
 
 ### Phase 4 — Commit et PR
 
