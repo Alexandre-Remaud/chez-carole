@@ -281,19 +281,15 @@ describe("UsersService", () => {
       })
       recipeModel.countDocuments.mockResolvedValue(10)
 
-      const result = await service.getUserRecipes(
-        mockUserId.toString(),
-        0,
-        20
-      )
+      const result = await service.getUserRecipes(mockUserId.toString(), 0, 20)
 
       expect(result).toEqual({ data: mockRecipes, total: 10 })
     })
 
     it("should throw BadRequestException for invalid ObjectId", async () => {
-      await expect(
-        service.getUserRecipes("invalid-id", 0, 20)
-      ).rejects.toThrow(BadRequestException)
+      await expect(service.getUserRecipes("invalid-id", 0, 20)).rejects.toThrow(
+        BadRequestException
+      )
     })
 
     it("should clamp skip and limit values", async () => {
@@ -311,11 +307,20 @@ describe("UsersService", () => {
 
       await service.getUserRecipes(mockUserId.toString(), -5, 200)
 
-      const skipCall =
-        recipeModel.find.mock.results[0].value.sort.mock.results[0].value.skip
-      expect(skipCall).toHaveBeenCalledWith(0)
-      const limitCall = skipCall.mock.results[0].value.limit
-      expect(limitCall).toHaveBeenCalledWith(100)
+      const sortMock = recipeModel.find.mock.results[0].value as Record<
+        string,
+        jest.Mock
+      >
+      const skipMock = sortMock.sort.mock.results[0].value as Record<
+        string,
+        jest.Mock
+      >
+      expect(skipMock.skip).toHaveBeenCalledWith(0)
+      const limitMock = skipMock.skip.mock.results[0].value as Record<
+        string,
+        jest.Mock
+      >
+      expect(limitMock.limit).toHaveBeenCalledWith(100)
     })
   })
 })
