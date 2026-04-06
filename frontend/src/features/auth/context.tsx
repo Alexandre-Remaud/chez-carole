@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -52,8 +53,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  async function refreshUser() {
+    try {
+      const userData = await authApi.getProfile()
+      setUser({
+        _id: userData._id,
+        email: userData.email,
+        name: userData.name,
+        avatarUrl: userData.avatarUrl,
+        bio: userData.bio,
+        role: userData.role,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt
+      } as User)
+    } catch {
+      // silently fail
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout } as AuthContextType}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, refreshUser } as AuthContextType}>
       {children}
     </AuthContext.Provider>
   )

@@ -230,6 +230,13 @@ export default function Layout() {
                               </p>
                               <p className="text-xs text-gray-500 truncate">{user.email}</p>
                             </div>
+                            <Link
+                              to="/profile"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-600 hover:bg-warm-50 hover:text-warm-600 transition-colors"
+                            >
+                              Mon profil
+                            </Link>
                             <button
                               type="button"
                               onClick={handleLogout}

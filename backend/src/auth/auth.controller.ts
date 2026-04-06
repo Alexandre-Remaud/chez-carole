@@ -89,7 +89,17 @@ export class AuthController {
   }
 
   @Get("me")
-  getProfile(@CurrentUser() user: JwtPayload) {
-    return { id: user.sub, email: user.email, name: user.name, role: user.role }
+  async getProfile(@CurrentUser() user: JwtPayload) {
+    const fullUser = await this.authService.validateUser(user)
+    if (!fullUser) {
+      return {
+        id: user.sub,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    }
+    const { password: _password, __v: _v, ...rest } = fullUser.toObject()
+    return rest
   }
 }

@@ -156,7 +156,10 @@ describe("AuthService", () => {
         expiresAt: new Date(Date.now() + 86400000)
       }
 
-      jwtService.verify.mockReturnValue({ sub: mockUserId.toString(), type: "refresh" })
+      jwtService.verify.mockReturnValue({
+        sub: mockUserId.toString(),
+        type: "refresh"
+      })
       refreshTokenModel.find.mockResolvedValue([storedToken])
       ;(bcrypt.compare as jest.Mock).mockResolvedValue(true)
       ;(bcrypt.hash as jest.Mock).mockResolvedValue("newHashedToken")
@@ -189,7 +192,10 @@ describe("AuthService", () => {
     })
 
     it("should throw if stored token not found", async () => {
-      jwtService.verify.mockReturnValue({ sub: mockUserId.toString(), type: "refresh" })
+      jwtService.verify.mockReturnValue({
+        sub: mockUserId.toString(),
+        type: "refresh"
+      })
       refreshTokenModel.find.mockResolvedValue([])
 
       await expect(service.refreshTokens("orphan-token")).rejects.toThrow(
@@ -205,7 +211,10 @@ describe("AuthService", () => {
         expiresAt: new Date(Date.now() + 86400000)
       }
 
-      jwtService.verify.mockReturnValue({ sub: mockUserId.toString(), type: "refresh" })
+      jwtService.verify.mockReturnValue({
+        sub: mockUserId.toString(),
+        type: "refresh"
+      })
       refreshTokenModel.find.mockResolvedValue([storedToken])
       ;(bcrypt.compare as jest.Mock).mockResolvedValue(true)
       userModel.findById.mockResolvedValue(null)
@@ -224,7 +233,10 @@ describe("AuthService", () => {
         expiresAt: new Date(Date.now() - 86400000)
       }
 
-      jwtService.verify.mockReturnValue({ sub: mockUserId.toString(), type: "refresh" })
+      jwtService.verify.mockReturnValue({
+        sub: mockUserId.toString(),
+        type: "refresh"
+      })
       refreshTokenModel.find.mockResolvedValue([expiredToken])
 
       await expect(service.refreshTokens("token")).rejects.toThrow(
