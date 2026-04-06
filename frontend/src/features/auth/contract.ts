@@ -9,6 +9,8 @@ export interface User {
   _id: string
   email: string
   name: string
+  avatarUrl?: string
+  bio?: string
   role: Role
   createdAt: string
   updatedAt: string

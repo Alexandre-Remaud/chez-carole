@@ -17,6 +17,12 @@ export class User {
   @Prop({ required: true })
   name: string
 
+  @Prop()
+  avatarUrl?: string
+
+  @Prop()
+  bio?: string
+
   @Prop({ type: String, enum: Role, default: Role.USER })
   role: Role
 
