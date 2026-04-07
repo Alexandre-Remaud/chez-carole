@@ -38,8 +38,8 @@ export class RecipesController {
 
   @Public()
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.recipesService.findOne(id)
+  findOne(@Param("id") id: string, @CurrentUser("sub") userId?: string) {
+    return this.recipesService.findOne(id, userId)
   }
 
   @Post()
