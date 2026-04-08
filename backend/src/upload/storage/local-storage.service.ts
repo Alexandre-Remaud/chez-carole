@@ -16,8 +16,8 @@ export class LocalStorageService implements StorageService {
 
   constructor(private readonly configService: ConfigService) {
     this.uploadDir = path.join(process.cwd(), "uploads")
-    const port = this.configService.get<number>("PORT", 3000)
-    this.baseUrl = `http://localhost:${port}/uploads`
+    const backendUrl = this.configService.get<string>("BACKEND_URL")
+    this.baseUrl = `${backendUrl}/uploads`
   }
 
   async upload(

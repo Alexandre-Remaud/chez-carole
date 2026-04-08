@@ -65,11 +65,7 @@ describe("ReviewsController", () => {
     it("should delegate to service with userId and role", async () => {
       mockReviewsService.deleteReview.mockResolvedValue({ deleted: true })
 
-      const result = await controller.deleteReview(
-        "review-1",
-        "user-1",
-        "user"
-      )
+      const result = await controller.deleteReview("review-1", "user-1", "user")
 
       expect(mockReviewsService.deleteReview).toHaveBeenCalledWith(
         "user-1",

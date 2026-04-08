@@ -12,8 +12,10 @@ import { ReviewsModule } from "./reviews/reviews.module"
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard"
 import { RolesGuard } from "./auth/guards/roles.guard"
 import { validate } from "./config/env.validation"
+import { AppController } from "./app.controller"
 
 @Module({
+  controllers: [AppController],
   imports: [
     ConfigModule.forRoot({ validate, isGlobal: true }),
     ThrottlerModule.forRoot([
@@ -25,7 +27,8 @@ import { validate } from "./config/env.validation"
     ]),
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>("MONGO_URI")
+        uri: configService.get<string>("MONGO_URI"),
+        dbName: configService.get<string>("MONGO_DB_NAME")
       }),
       inject: [ConfigService]
     }),

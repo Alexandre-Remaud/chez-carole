@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, type FormEvent } from "react"
 import { Link, Outlet, useNavigate } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 import toast from "react-hot-toast"
 import { useAuth } from "@/features/auth/hooks"
 
@@ -278,7 +277,6 @@ export default function Layout() {
           Chez Carole — Vos recettes, simplement.
         </footer>
       </div>
-      <TanStackRouterDevtools />
     </>
   )
 }

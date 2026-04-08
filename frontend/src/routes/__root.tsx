@@ -1,8 +1,17 @@
+import { lazy } from "react"
 import Layout from "@/components/Layout"
 import ErrorBoundary from "@/components/ErrorBoundary"
 import { Toaster } from "react-hot-toast"
 import { createRootRoute } from "@tanstack/react-router"
 import { AuthProvider } from "@/features/auth"
+
+const TanStackRouterDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-router-devtools").then((mod) => ({
+        default: mod.TanStackRouterDevtools
+      }))
+    )
+  : () => null
 
 function RootComponent() {
   return (
@@ -21,6 +30,7 @@ function RootComponent() {
             }
           }}
         />
+        <TanStackRouterDevtools />
       </AuthProvider>
     </ErrorBoundary>
   )
