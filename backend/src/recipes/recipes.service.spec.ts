@@ -127,7 +127,11 @@ describe("RecipesService", () => {
       expect(mockRecipeModel.find).toHaveBeenCalledWith({})
       expect(mockRecipeModel.countDocuments).toHaveBeenCalledWith({})
       expect(result).toEqual({
-        data: recipes.map((r) => ({ ...r, favoritesCount: 0, isFavorited: false })),
+        data: recipes.map((r) => ({
+          ...r,
+          favoritesCount: 0,
+          isFavorited: false
+        })),
         total: 1
       })
     })
@@ -144,7 +148,11 @@ describe("RecipesService", () => {
         category: "dessert"
       })
       expect(result).toEqual({
-        data: recipes.map((r) => ({ ...r, favoritesCount: 0, isFavorited: false })),
+        data: recipes.map((r) => ({
+          ...r,
+          favoritesCount: 0,
+          isFavorited: false
+        })),
         total: 1
       })
     })

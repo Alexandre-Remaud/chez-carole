@@ -8,6 +8,9 @@ import ConfirmDialog from "@/components/ConfirmDialog"
 import type { Recipe } from "@recipes/contract"
 import { useAuth } from "@/features/auth/hooks"
 import FavoriteButton from "@/features/favorites/FavoriteButton"
+import ReviewSummary from "@/features/reviews/ReviewSummary"
+import ReviewForm from "@/features/reviews/ReviewForm"
+import ReviewList from "@/features/reviews/ReviewList"
 
 export default function RecipeDetail() {
   const { id } = useParams({ from: "/recipes/$id" })
@@ -16,6 +19,7 @@ export default function RecipeDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [reviewKey, setReviewKey] = useState(0)
   const { user } = useAuth()
 
   const isOwner = user && recipe && recipe.userId === user._id
@@ -153,6 +157,13 @@ export default function RecipeDetail() {
         />
       </div>
 
+      <div className="mb-2">
+        <ReviewSummary
+          averageRating={recipe.averageRating ?? 0}
+          ratingsCount={recipe.ratingsCount ?? 0}
+        />
+      </div>
+
       <p className="text-gray-500 mb-6">{recipe.description}</p>
 
       <RecipeBadges recipe={recipe} className="mb-8" />
@@ -211,6 +222,19 @@ export default function RecipeDetail() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className="mt-10">
+        {user && !isOwner && (
+          <div className="mb-6">
+            <ReviewForm
+              key={reviewKey}
+              recipeId={recipe._id}
+              onSuccess={() => setReviewKey((k) => k + 1)}
+            />
+          </div>
+        )}
+        <ReviewList key={`list-${reviewKey}`} recipeId={recipe._id} />
       </section>
 
       {showDeleteDialog && (
