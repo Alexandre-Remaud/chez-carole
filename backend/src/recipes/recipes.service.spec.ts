@@ -26,8 +26,13 @@ const mockSkipFn = jest.fn()
 
 const mockSortFn = jest.fn()
 
+function withToObject<T>(obj: T) {
+  return { ...obj, toObject: () => obj }
+}
+
 function mockFind(results: unknown[]) {
-  mockLimitFn.mockReturnValue({ exec: jest.fn().mockResolvedValue(results) })
+  const docs = results.map((r) => withToObject(r))
+  mockLimitFn.mockReturnValue({ exec: jest.fn().mockResolvedValue(docs) })
   mockSkipFn.mockReturnValue({ limit: mockLimitFn })
   mockSortFn.mockReturnValue({ skip: mockSkipFn })
   return { sort: mockSortFn }
@@ -81,6 +86,8 @@ describe("RecipesService", () => {
     mockSortFn.mockReset()
     mockSkipFn.mockReset()
     mockLimitFn.mockReset()
+    mockFavoritesService.getFavoritesCount.mockResolvedValue(0)
+    mockFavoritesService.isFavorited.mockResolvedValue(false)
   })
 
   describe("create", () => {
@@ -119,7 +126,10 @@ describe("RecipesService", () => {
 
       expect(mockRecipeModel.find).toHaveBeenCalledWith({})
       expect(mockRecipeModel.countDocuments).toHaveBeenCalledWith({})
-      expect(result).toEqual({ data: recipes, total: 1 })
+      expect(result).toEqual({
+        data: recipes.map((r) => ({ ...r, favoritesCount: 0, isFavorited: false })),
+        total: 1
+      })
     })
 
     it("should filter by category and return paginated result", async () => {
@@ -133,7 +143,10 @@ describe("RecipesService", () => {
       expect(mockRecipeModel.countDocuments).toHaveBeenCalledWith({
         category: "dessert"
       })
-      expect(result).toEqual({ data: recipes, total: 1 })
+      expect(result).toEqual({
+        data: recipes.map((r) => ({ ...r, favoritesCount: 0, isFavorited: false })),
+        total: 1
+      })
     })
 
     it("should apply skip and limit", async () => {
@@ -171,7 +184,11 @@ describe("RecipesService", () => {
       const result = await service.findOne(VALID_ID)
 
       expect(mockRecipeModel.findById).toHaveBeenCalledWith(VALID_ID)
-      expect(result).toEqual({ ...mockRecipe, favoritesCount: 3, isFavorited: false })
+      expect(result).toEqual({
+        ...mockRecipe,
+        favoritesCount: 3,
+        isFavorited: false
+      })
     })
 
     it("should throw NotFoundException if recipe not found", async () => {
@@ -234,7 +251,9 @@ describe("RecipesService", () => {
       const result = await service.remove(VALID_ID)
 
       expect(mockRecipeModel.findByIdAndDelete).toHaveBeenCalledWith(VALID_ID)
-      expect(mockFavoritesService.deleteByRecipeId).toHaveBeenCalledWith(VALID_ID)
+      expect(mockFavoritesService.deleteByRecipeId).toHaveBeenCalledWith(
+        VALID_ID
+      )
       expect(result).toEqual(mockRecipe)
     })
 

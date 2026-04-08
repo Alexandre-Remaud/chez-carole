@@ -74,7 +74,8 @@ describe("RecipesController", () => {
         undefined,
         undefined,
         0,
-        20
+        20,
+        undefined
       )
       expect(result).toEqual(paginatedResult)
     })
@@ -88,7 +89,8 @@ describe("RecipesController", () => {
         "dessert",
         undefined,
         0,
-        20
+        20,
+        undefined
       )
     })
 
@@ -101,7 +103,8 @@ describe("RecipesController", () => {
         undefined,
         "tarte",
         0,
-        20
+        20,
+        undefined
       )
     })
 
@@ -114,7 +117,8 @@ describe("RecipesController", () => {
         undefined,
         undefined,
         20,
-        10
+        10,
+        undefined
       )
     })
 
@@ -127,7 +131,8 @@ describe("RecipesController", () => {
         "starter",
         undefined,
         40,
-        20
+        20,
+        undefined
       )
     })
   })
@@ -138,7 +143,10 @@ describe("RecipesController", () => {
 
       const result = await controller.findOne(VALID_ID, undefined)
 
-      expect(mockRecipesService.findOne).toHaveBeenCalledWith(VALID_ID, undefined)
+      expect(mockRecipesService.findOne).toHaveBeenCalledWith(
+        VALID_ID,
+        undefined
+      )
       expect(result).toEqual(mockRecipe)
     })
   })

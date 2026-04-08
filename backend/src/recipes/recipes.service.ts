@@ -60,7 +60,13 @@ export class RecipesService {
     })
   }
 
-  async findAll(category?: string, search?: string, skip = 0, limit = 20) {
+  async findAll(
+    category?: string,
+    search?: string,
+    skip = 0,
+    limit = 20,
+    userId?: string
+  ) {
     const safeSkip = Math.max(0, skip)
     const safeLimit = Math.min(Math.max(1, limit), 100)
 
@@ -79,7 +85,20 @@ export class RecipesService {
         .exec(),
       this.recipeModel.countDocuments(filter)
     ])
-    return { data, total }
+
+    const enriched = await Promise.all(
+      data.map(async (recipe) => {
+        const recipeId = recipe._id.toString()
+        const favoritesCount =
+          await this.favoritesService.getFavoritesCount(recipeId)
+        const isFavorited = userId
+          ? await this.favoritesService.isFavorited(userId, recipeId)
+          : false
+        return { ...recipe.toObject(), favoritesCount, isFavorited }
+      })
+    )
+
+    return { data: enriched, total }
   }
 
   async findOne(id: string, userId?: string) {
