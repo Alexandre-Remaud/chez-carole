@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useId, useState } from "react"
 
 interface StarRatingProps {
   value: number
@@ -20,6 +20,7 @@ export default function StarRating({
   size = "md"
 }: StarRatingProps) {
   const [hoverValue, setHoverValue] = useState(0)
+  const instanceId = useId()
   const pixelSize = SIZES[size]
   const displayValue = hoverValue || value
 
@@ -31,6 +32,7 @@ export default function StarRating({
       {[1, 2, 3, 4, 5].map((star) => {
         const filled = displayValue >= star
         const halfFilled = !filled && displayValue >= star - 0.5
+        const gradientId = `half-${instanceId}-${star}`
 
         return (
           <button
@@ -50,7 +52,7 @@ export default function StarRating({
               width={pixelSize}
               height={pixelSize}
               viewBox="0 0 24 24"
-              fill={filled ? "#f59e0b" : halfFilled ? "url(#half)" : "none"}
+              fill={filled ? "#f59e0b" : halfFilled ? `url(#${gradientId})` : "none"}
               stroke="#f59e0b"
               strokeWidth="2"
               strokeLinecap="round"
@@ -58,7 +60,7 @@ export default function StarRating({
             >
               {halfFilled && (
                 <defs>
-                  <linearGradient id="half">
+                  <linearGradient id={gradientId}>
                     <stop offset="50%" stopColor="#f59e0b" />
                     <stop offset="50%" stopColor="transparent" />
                   </linearGradient>
