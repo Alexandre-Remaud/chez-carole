@@ -1,10 +1,11 @@
 import {
   Injectable,
   NotFoundException,
-  ConflictException
+  ConflictException,
+  BadRequestException
 } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
-import { Model, Types } from "mongoose"
+import { Model, Types, isValidObjectId } from "mongoose"
 import { Favorite } from "./entities/favorite.entity"
 import { Recipe } from "../recipes/entities/recipe.entity"
 
@@ -15,7 +16,14 @@ export class FavoritesService {
     @InjectModel(Recipe.name) private recipeModel: Model<Recipe>
   ) {}
 
+  private validateObjectId(id: string): void {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException("Invalid ID format")
+    }
+  }
+
   async addFavorite(userId: string, recipeId: string) {
+    this.validateObjectId(recipeId)
     const recipe = await this.recipeModel.findById(recipeId).exec()
     if (!recipe) {
       throw new NotFoundException("Recipe not found")
@@ -45,6 +53,7 @@ export class FavoritesService {
   }
 
   async removeFavorite(userId: string, recipeId: string) {
+    this.validateObjectId(recipeId)
     const recipe = await this.recipeModel.findById(recipeId).exec()
     if (!recipe) {
       throw new NotFoundException("Recipe not found")
@@ -98,12 +107,14 @@ export class FavoritesService {
   }
 
   async getFavoritesCount(recipeId: string): Promise<number> {
+    this.validateObjectId(recipeId)
     return this.favoriteModel.countDocuments({
       recipeId: new Types.ObjectId(recipeId)
     })
   }
 
   async isFavorited(userId: string, recipeId: string): Promise<boolean> {
+    this.validateObjectId(recipeId)
     const favorite = await this.favoriteModel
       .findOne({
         userId: new Types.ObjectId(userId),
@@ -114,6 +125,7 @@ export class FavoritesService {
   }
 
   async deleteByRecipeId(recipeId: string): Promise<void> {
+    this.validateObjectId(recipeId)
     await this.favoriteModel
       .deleteMany({ recipeId: new Types.ObjectId(recipeId) })
       .exec()

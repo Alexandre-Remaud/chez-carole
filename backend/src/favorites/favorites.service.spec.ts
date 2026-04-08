@@ -8,7 +8,6 @@ import { Recipe } from "../recipes/entities/recipe.entity"
 
 const USER_ID = "507f1f77bcf86cd799439011"
 const RECIPE_ID = "507f1f77bcf86cd799439012"
-const OTHER_RECIPE_ID = "507f1f77bcf86cd799439013"
 
 const mockRecipe = {
   _id: new Types.ObjectId(RECIPE_ID),
@@ -74,7 +73,9 @@ describe("FavoritesService", () => {
       expect(result).toEqual({ favorited: true, favoritesCount: 1 })
       expect(mockRecipeModel.findById).toHaveBeenCalledWith(RECIPE_ID)
       expect(mockFavoriteModel.create).toHaveBeenCalledWith({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         userId: expect.any(Types.ObjectId),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         recipeId: expect.any(Types.ObjectId)
       })
     })
@@ -117,7 +118,9 @@ describe("FavoritesService", () => {
 
       expect(result).toEqual({ favorited: false, favoritesCount: 0 })
       expect(mockFavoriteModel.findOneAndDelete).toHaveBeenCalledWith({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         userId: expect.any(Types.ObjectId),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         recipeId: expect.any(Types.ObjectId)
       })
     })
@@ -127,9 +130,9 @@ describe("FavoritesService", () => {
         exec: jest.fn().mockResolvedValue(null)
       })
 
-      await expect(
-        service.removeFavorite(USER_ID, RECIPE_ID)
-      ).rejects.toThrow(NotFoundException)
+      await expect(service.removeFavorite(USER_ID, RECIPE_ID)).rejects.toThrow(
+        NotFoundException
+      )
     })
 
     it("should throw NotFoundException if favorite not found", async () => {
@@ -140,9 +143,9 @@ describe("FavoritesService", () => {
         exec: jest.fn().mockResolvedValue(null)
       })
 
-      await expect(
-        service.removeFavorite(USER_ID, RECIPE_ID)
-      ).rejects.toThrow(NotFoundException)
+      await expect(service.removeFavorite(USER_ID, RECIPE_ID)).rejects.toThrow(
+        NotFoundException
+      )
     })
   })
 
@@ -244,6 +247,7 @@ describe("FavoritesService", () => {
 
       expect(result).toBe(5)
       expect(mockFavoriteModel.countDocuments).toHaveBeenCalledWith({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         recipeId: expect.any(Types.ObjectId)
       })
     })
@@ -288,6 +292,7 @@ describe("FavoritesService", () => {
       await service.deleteByRecipeId(RECIPE_ID)
 
       expect(mockFavoriteModel.deleteMany).toHaveBeenCalledWith({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         recipeId: expect.any(Types.ObjectId)
       })
     })
