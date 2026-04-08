@@ -53,7 +53,7 @@ export default function ProfileHeader({
             Membre depuis le {formattedDate}
           </span>
           <span>
-            {recipesCount} recette{recipesCount !== 1 ? "s" : ""}
+            {recipesCount} recette{recipesCount > 1 ? "s" : ""}
           </span>
         </div>
       </div>

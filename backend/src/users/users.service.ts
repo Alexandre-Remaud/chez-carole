@@ -6,7 +6,7 @@ import {
   ConflictException
 } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
-import { Model, isValidObjectId } from "mongoose"
+import { Model, Types, isValidObjectId } from "mongoose"
 import * as bcrypt from "bcrypt"
 import { User, UserDocument } from "./entities/user.entity"
 import { Recipe } from "../recipes/entities/recipe.entity"
@@ -40,7 +40,7 @@ export class UsersService {
       throw new NotFoundException("Utilisateur non trouvé")
     }
 
-    const recipesCount = await this.recipeModel.countDocuments({ userId: id })
+    const recipesCount = await this.recipeModel.countDocuments({ userId: new Types.ObjectId(id) })
 
     return {
       id: user._id,
@@ -120,7 +120,7 @@ export class UsersService {
     const safeSkip = Math.max(0, skip)
     const safeLimit = Math.min(Math.max(1, limit), 100)
 
-    const filter = { userId }
+    const filter = { userId: new Types.ObjectId(userId) }
 
     const [data, total] = await Promise.all([
       this.recipeModel

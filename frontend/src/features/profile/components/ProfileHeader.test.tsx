@@ -76,6 +76,12 @@ describe("ProfileHeader", () => {
     expect(screen.queryByText("alice@example.com")).not.toBeInTheDocument()
   })
 
+  it("should show singular 'recette' for count of 0", () => {
+    render(<ProfileHeader {...baseProps} recipesCount={0} />)
+
+    expect(screen.getByText("0 recette")).toBeInTheDocument()
+  })
+
   it("should show singular 'recette' for count of 1", () => {
     render(<ProfileHeader {...baseProps} recipesCount={1} />)
 
