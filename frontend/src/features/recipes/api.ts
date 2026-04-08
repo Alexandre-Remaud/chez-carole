@@ -23,7 +23,9 @@ export const recipeService = {
     if (search) params.set("search", search)
     params.set("skip", String(skip))
     params.set("limit", String(limit))
-    return apiFetch<PaginatedRecipes>(`${API_URL}/recipes?${params}`)
+    return apiFetch<PaginatedRecipes>(`${API_URL}/recipes?${params}`, {
+      credentials: "include"
+    })
   },
 
   async getRecipe(id: string) {
