@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsEnum,
   IsNotEmpty,
+  IsUrl,
   MaxLength,
   Min,
   Max,
@@ -86,15 +87,15 @@ export class CreateRecipeDto {
   steps: StepDto[]
 
   @IsOptional()
-  @IsString()
+  @IsUrl({}, { message: "L'URL de l'image est invalide" })
   imageUrl?: string
 
   @IsOptional()
-  @IsString()
+  @IsUrl({}, { message: "L'URL de la miniature est invalide" })
   imageThumbnailUrl?: string
 
   @IsOptional()
-  @IsString()
+  @IsUrl({}, { message: "L'URL de l'image moyenne est invalide" })
   imageMediumUrl?: string
 
   @IsOptional()

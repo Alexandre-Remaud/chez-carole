@@ -38,14 +38,14 @@ export function setRefreshCookie(res: Response, refreshToken: string) {
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax",
     maxAge: REFRESH_TOKEN_MAX_AGE,
-    path: "/"
+    path: "/auth/refresh"
   })
 }
 
 export function clearRefreshCookie(res: Response) {
   const isProduction = process.env.NODE_ENV === "production"
   res.clearCookie("refresh_token", {
-    path: "/",
+    path: "/auth/refresh",
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax"
   })

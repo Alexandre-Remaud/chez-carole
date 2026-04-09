@@ -43,7 +43,7 @@ describe("UploadService", () => {
     const validFile = {
       mimetype: "image/jpeg",
       size: 1024 * 1024,
-      buffer: Buffer.from("fake"),
+      buffer: Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]),
       originalname: "photo.jpg"
     } as Express.Multer.File
 
