@@ -16,6 +16,12 @@ import {
 const ALLOWED_MIMETYPES = ["image/jpeg", "image/png", "image/webp"]
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 
+const MAGIC_BYTES: Record<string, { offset: number; bytes: number[] }> = {
+  "image/jpeg": { offset: 0, bytes: [0xff, 0xd8, 0xff] },
+  "image/png": { offset: 0, bytes: [0x89, 0x50, 0x4e, 0x47] },
+  "image/webp": { offset: 8, bytes: [0x57, 0x45, 0x42, 0x50] }
+}
+
 @Injectable()
 export class UploadService {
   constructor(
@@ -30,6 +36,17 @@ export class UploadService {
     if (!ALLOWED_MIMETYPES.includes(file.mimetype)) {
       throw new BadRequestException(
         "Format non supporté. Formats acceptés : JPEG, PNG, WebP."
+      )
+    }
+
+    const magic = MAGIC_BYTES[file.mimetype]
+    if (
+      !magic ||
+      file.buffer.length < magic.offset + magic.bytes.length ||
+      !magic.bytes.every((b, i) => file.buffer[magic.offset + i] === b)
+    ) {
+      throw new BadRequestException(
+        "Le contenu du fichier ne correspond pas au type déclaré."
       )
     }
 
