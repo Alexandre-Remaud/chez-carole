@@ -1,4 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing"
+import { ConfigService } from "@nestjs/config"
+import type { Response } from "express"
 import { RecipesController } from "./recipes.controller"
 import { RecipesService } from "./recipes.service"
 import { CreateRecipeDto } from "./dto/create-recipe.dto"
@@ -29,6 +31,10 @@ const mockRecipesService = {
   remove: jest.fn()
 }
 
+const mockConfigService = {
+  get: jest.fn().mockReturnValue("http://localhost:5173")
+}
+
 describe("RecipesController", () => {
   let controller: RecipesController
 
@@ -39,6 +45,10 @@ describe("RecipesController", () => {
         {
           provide: RecipesService,
           useValue: mockRecipesService
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService
         }
       ]
     }).compile()
@@ -207,6 +217,128 @@ describe("RecipesController", () => {
 
       expect(mockRecipesService.remove).toHaveBeenCalledWith(VALID_ID)
       expect(result).toEqual(mockRecipe)
+    })
+  })
+
+  describe("getOpenGraph", () => {
+    const sendMock = jest.fn<Response, [string]>()
+    const setHeaderMock = jest.fn()
+    let mockRes: Response
+
+    beforeEach(() => {
+      sendMock.mockClear()
+      setHeaderMock.mockClear()
+      mockRes = {
+        setHeader: setHeaderMock,
+        send: sendMock
+      } as unknown as Response
+    })
+
+    function getSentHtml(): string {
+      return sendMock.mock.calls[0][0]
+    }
+
+    it("should return HTML with OG meta tags and redirect", async () => {
+      mockRecipesService.findOne.mockResolvedValue(mockRecipe)
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      expect(setHeaderMock).toHaveBeenCalledWith(
+        "Content-Type",
+        "text/html; charset=utf-8"
+      )
+      const html = getSentHtml()
+      expect(html).toContain('og:title" content="Tarte aux pommes"')
+      expect(html).toContain(
+        `refresh" content="0;url=http://localhost:5173/recipes/${VALID_ID}"`
+      )
+    })
+
+    it("should truncate description to 160 chars in OG meta", async () => {
+      const longDesc = "A".repeat(200)
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        description: longDesc
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      const truncated = "A".repeat(157) + "..."
+      expect(html).toContain(`og:description" content="${truncated}"`)
+    })
+
+    it("should return full description when <= 160 chars", async () => {
+      mockRecipesService.findOne.mockResolvedValue(mockRecipe)
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      expect(html).toContain('og:description" content="Une tarte classique"')
+    })
+
+    it("should return empty description when recipe has none", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        description: undefined
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      expect(html).toContain('og:description" content=""')
+    })
+
+    it("should prefer imageMediumUrl over imageUrl", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        imageMediumUrl: "http://img.test/medium.jpg",
+        imageUrl: "http://img.test/full.jpg"
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      expect(html).toContain('og:image" content="http://img.test/medium.jpg"')
+    })
+
+    it("should fallback to imageUrl when no imageMediumUrl", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        imageMediumUrl: undefined,
+        imageUrl: "http://img.test/full.jpg"
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      expect(html).toContain('og:image" content="http://img.test/full.jpg"')
+    })
+
+    it("should not include og:image when no images", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        imageMediumUrl: undefined,
+        imageUrl: undefined
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      expect(html).not.toContain("og:image")
+    })
+
+    it("should escape HTML in recipe data", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        title: 'Tarte "aux" <pommes>'
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes)
+
+      const html = getSentHtml()
+      expect(html).toContain("Tarte &quot;aux&quot; &lt;pommes&gt;")
+      expect(html).not.toContain("<pommes>")
     })
   })
 })
