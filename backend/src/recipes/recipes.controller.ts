@@ -67,13 +67,13 @@ export class RecipesController {
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>${escHtml(recipe.title)} — Chez Carole</title>
+<title>${escHtml(recipe.title)} — La tablée de Carole</title>
 <meta property="og:title" content="${escHtml(recipe.title)}" />
 <meta property="og:description" content="${escHtml(description)}" />
 ${image ? `<meta property="og:image" content="${escHtml(image)}" />` : ""}
 <meta property="og:url" content="${escHtml(recipeUrl)}" />
 <meta property="og:type" content="article" />
-<meta property="og:site_name" content="Chez Carole" />
+<meta property="og:site_name" content="La tablée de Carole" />
 <meta property="og:locale" content="fr_FR" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="${escHtml(recipe.title)}" />

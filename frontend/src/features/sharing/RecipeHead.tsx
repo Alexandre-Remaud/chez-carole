@@ -18,13 +18,13 @@ export default function RecipeHead({ recipe }: RecipeHeadProps) {
 
   return (
     <Helmet>
-      <title>{title} — Chez Carole</title>
+      <title>{title} — La tablée de Carole</title>
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       {image && <meta property="og:image" content={image} />}
       <meta property="og:url" content={url} />
       <meta property="og:type" content="article" />
-      <meta property="og:site_name" content="Chez Carole" />
+      <meta property="og:site_name" content="La tablée de Carole" />
       <meta property="og:locale" content="fr_FR" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
