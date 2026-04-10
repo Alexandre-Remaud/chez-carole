@@ -1,4 +1,4 @@
-# Chez Carole
+# La tablée de Carole
 
 Application web de partage de recettes de cuisine.
 

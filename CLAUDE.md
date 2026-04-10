@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Chez Carole is a French recipe-sharing web app. pnpm monorepo with a NestJS backend (MongoDB/Mongoose) and a React frontend (Vite + TanStack Router).
+La tablée de Carole is a French recipe-sharing web app. pnpm monorepo with a NestJS backend (MongoDB/Mongoose) and a React frontend (Vite + TanStack Router).
 
 ## Commands
 

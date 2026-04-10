@@ -1,4 +1,4 @@
-# Chez Carole - Cahier des charges
+# La tablée de Carole - Cahier des charges
 
 Application de gestion de recettes de cuisine. Monorepo avec backend NestJS (MongoDB) et frontend React (TanStack Router).
 

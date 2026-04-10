@@ -65,7 +65,7 @@ export default function Home() {
     <div className="max-w-5xl mx-auto">
       <div className="text-center py-10 mb-6">
         <h1 className="font-display text-4xl font-bold text-gray-800 mb-2">
-          Bienvenue chez Carole
+          Bienvenue à la tablée de Carole
         </h1>
         <p className="text-gray-500 text-lg">
           Retrouvez toutes vos recettes au même endroit.
