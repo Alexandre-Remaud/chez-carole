@@ -7,8 +7,11 @@ import {
   Param,
   Delete,
   Query,
-  ForbiddenException
+  ForbiddenException,
+  Header,
+  Res
 } from "@nestjs/common"
+import type { Response } from "express"
 import { ConfigService } from "@nestjs/config"
 import { RecipesService } from "./recipes.service"
 import { CreateRecipeDto } from "./dto/create-recipe.dto"
@@ -44,7 +47,10 @@ export class RecipesController {
 
   @Public()
   @Get(":id/og")
-  async getOpenGraph(@Param("id") id: string) {
+  async getOpenGraph(
+    @Param("id") id: string,
+    @Res() res: Response
+  ) {
     const recipe = await this.recipesService.findOne(id)
     const frontendUrl = this.configService.get<string>("FRONTEND_URL")
     const description = recipe.description
@@ -52,13 +58,40 @@ export class RecipesController {
         ? recipe.description.slice(0, 157) + "..."
         : recipe.description
       : ""
+    const image = recipe.imageMediumUrl || recipe.imageUrl || ""
+    const recipeUrl = `${frontendUrl}/recipes/${id}`
+    const escHtml = (s: string) =>
+      s
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
 
-    return {
-      title: recipe.title,
-      description,
-      imageUrl: recipe.imageMediumUrl || recipe.imageUrl || null,
-      url: `${frontendUrl}/recipes/${id}`
-    }
+    const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>${escHtml(recipe.title)} — Chez Carole</title>
+<meta property="og:title" content="${escHtml(recipe.title)}" />
+<meta property="og:description" content="${escHtml(description)}" />
+${image ? `<meta property="og:image" content="${escHtml(image)}" />` : ""}
+<meta property="og:url" content="${escHtml(recipeUrl)}" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Chez Carole" />
+<meta property="og:locale" content="fr_FR" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${escHtml(recipe.title)}" />
+<meta name="twitter:description" content="${escHtml(description)}" />
+${image ? `<meta name="twitter:image" content="${escHtml(image)}" />` : ""}
+<meta http-equiv="refresh" content="0;url=${escHtml(recipeUrl)}" />
+</head>
+<body>
+<p>Redirection vers <a href="${escHtml(recipeUrl)}">${escHtml(recipe.title)}</a>...</p>
+</body>
+</html>`
+
+    res.setHeader("Content-Type", "text/html; charset=utf-8")
+    res.send(html)
   }
 
   @Public()

@@ -220,49 +220,64 @@ describe("RecipesController", () => {
   })
 
   describe("getOpenGraph", () => {
-    it("should return OG metadata with correct title and url", async () => {
-      mockRecipesService.findOne.mockResolvedValue(mockRecipe)
+    let mockRes: { setHeader: jest.Mock; send: jest.Mock }
 
-      const result = await controller.getOpenGraph(VALID_ID)
-
-      expect(result.title).toBe("Tarte aux pommes")
-      expect(result.url).toBe(`http://localhost:5173/recipes/${VALID_ID}`)
+    beforeEach(() => {
+      mockRes = {
+        setHeader: jest.fn(),
+        send: jest.fn()
+      }
     })
 
-    it("should truncate description to 160 chars", async () => {
+    it("should return HTML with OG meta tags and redirect", async () => {
+      mockRecipesService.findOne.mockResolvedValue(mockRecipe)
+
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
+
+      expect(mockRes.setHeader).toHaveBeenCalledWith(
+        "Content-Type",
+        "text/html; charset=utf-8"
+      )
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).toContain('og:title" content="Tarte aux pommes"')
+      expect(html).toContain(
+        `refresh" content="0;url=http://localhost:5173/recipes/${VALID_ID}"`
+      )
+    })
+
+    it("should truncate description to 160 chars in OG meta", async () => {
       const longDesc = "A".repeat(200)
       mockRecipesService.findOne.mockResolvedValue({
         ...mockRecipe,
         description: longDesc
       })
 
-      const result = await controller.getOpenGraph(VALID_ID)
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
 
-      expect(result.description).toBe("A".repeat(157) + "...")
-      expect(result.description.length).toBe(160)
+      const html = mockRes.send.mock.calls[0][0] as string
+      const truncated = "A".repeat(157) + "..."
+      expect(html).toContain(`og:description" content="${truncated}"`)
     })
 
     it("should return full description when <= 160 chars", async () => {
-      const shortDesc = "Une tarte classique"
-      mockRecipesService.findOne.mockResolvedValue({
-        ...mockRecipe,
-        description: shortDesc
-      })
+      mockRecipesService.findOne.mockResolvedValue(mockRecipe)
 
-      const result = await controller.getOpenGraph(VALID_ID)
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
 
-      expect(result.description).toBe(shortDesc)
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).toContain('og:description" content="Une tarte classique"')
     })
 
-    it("should return empty description when recipe has no description", async () => {
+    it("should return empty description when recipe has none", async () => {
       mockRecipesService.findOne.mockResolvedValue({
         ...mockRecipe,
         description: undefined
       })
 
-      const result = await controller.getOpenGraph(VALID_ID)
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
 
-      expect(result.description).toBe("")
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).toContain('og:description" content=""')
     })
 
     it("should prefer imageMediumUrl over imageUrl", async () => {
@@ -272,9 +287,10 @@ describe("RecipesController", () => {
         imageUrl: "http://img.test/full.jpg"
       })
 
-      const result = await controller.getOpenGraph(VALID_ID)
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
 
-      expect(result.imageUrl).toBe("http://img.test/medium.jpg")
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).toContain('og:image" content="http://img.test/medium.jpg"')
     })
 
     it("should fallback to imageUrl when no imageMediumUrl", async () => {
@@ -284,21 +300,36 @@ describe("RecipesController", () => {
         imageUrl: "http://img.test/full.jpg"
       })
 
-      const result = await controller.getOpenGraph(VALID_ID)
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
 
-      expect(result.imageUrl).toBe("http://img.test/full.jpg")
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).toContain('og:image" content="http://img.test/full.jpg"')
     })
 
-    it("should return null imageUrl when no images", async () => {
+    it("should not include og:image when no images", async () => {
       mockRecipesService.findOne.mockResolvedValue({
         ...mockRecipe,
         imageMediumUrl: undefined,
         imageUrl: undefined
       })
 
-      const result = await controller.getOpenGraph(VALID_ID)
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
 
-      expect(result.imageUrl).toBeNull()
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).not.toContain("og:image")
+    })
+
+    it("should escape HTML in recipe data", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        title: 'Tarte "aux" <pommes>'
+      })
+
+      await controller.getOpenGraph(VALID_ID, mockRes as any)
+
+      const html = mockRes.send.mock.calls[0][0] as string
+      expect(html).toContain("Tarte &quot;aux&quot; &lt;pommes&gt;")
+      expect(html).not.toContain('<pommes>')
     })
   })
 })
