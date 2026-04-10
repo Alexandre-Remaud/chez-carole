@@ -1,5 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing"
 import { ConfigService } from "@nestjs/config"
+import type { Response } from "express"
 import { RecipesController } from "./recipes.controller"
 import { RecipesService } from "./recipes.service"
 import { CreateRecipeDto } from "./dto/create-recipe.dto"
@@ -220,25 +221,33 @@ describe("RecipesController", () => {
   })
 
   describe("getOpenGraph", () => {
-    let mockRes: { setHeader: jest.Mock; send: jest.Mock }
+    const sendMock = jest.fn<Response, [string]>()
+    const setHeaderMock = jest.fn()
+    let mockRes: Response
 
     beforeEach(() => {
+      sendMock.mockClear()
+      setHeaderMock.mockClear()
       mockRes = {
-        setHeader: jest.fn(),
-        send: jest.fn()
-      }
+        setHeader: setHeaderMock,
+        send: sendMock
+      } as unknown as Response
     })
+
+    function getSentHtml(): string {
+      return sendMock.mock.calls[0][0]
+    }
 
     it("should return HTML with OG meta tags and redirect", async () => {
       mockRecipesService.findOne.mockResolvedValue(mockRecipe)
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      expect(mockRes.setHeader).toHaveBeenCalledWith(
+      expect(setHeaderMock).toHaveBeenCalledWith(
         "Content-Type",
         "text/html; charset=utf-8"
       )
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).toContain('og:title" content="Tarte aux pommes"')
       expect(html).toContain(
         `refresh" content="0;url=http://localhost:5173/recipes/${VALID_ID}"`
@@ -252,9 +261,9 @@ describe("RecipesController", () => {
         description: longDesc
       })
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       const truncated = "A".repeat(157) + "..."
       expect(html).toContain(`og:description" content="${truncated}"`)
     })
@@ -262,9 +271,9 @@ describe("RecipesController", () => {
     it("should return full description when <= 160 chars", async () => {
       mockRecipesService.findOne.mockResolvedValue(mockRecipe)
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).toContain('og:description" content="Une tarte classique"')
     })
 
@@ -274,9 +283,9 @@ describe("RecipesController", () => {
         description: undefined
       })
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).toContain('og:description" content=""')
     })
 
@@ -287,9 +296,9 @@ describe("RecipesController", () => {
         imageUrl: "http://img.test/full.jpg"
       })
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).toContain('og:image" content="http://img.test/medium.jpg"')
     })
 
@@ -300,9 +309,9 @@ describe("RecipesController", () => {
         imageUrl: "http://img.test/full.jpg"
       })
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).toContain('og:image" content="http://img.test/full.jpg"')
     })
 
@@ -313,9 +322,9 @@ describe("RecipesController", () => {
         imageUrl: undefined
       })
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).not.toContain("og:image")
     })
 
@@ -325,11 +334,11 @@ describe("RecipesController", () => {
         title: 'Tarte "aux" <pommes>'
       })
 
-      await controller.getOpenGraph(VALID_ID, mockRes as any)
+      await controller.getOpenGraph(VALID_ID, mockRes)
 
-      const html = mockRes.send.mock.calls[0][0] as string
+      const html = getSentHtml()
       expect(html).toContain("Tarte &quot;aux&quot; &lt;pommes&gt;")
-      expect(html).not.toContain('<pommes>')
+      expect(html).not.toContain("<pommes>")
     })
   })
 })

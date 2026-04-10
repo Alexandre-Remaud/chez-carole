@@ -8,7 +8,6 @@ import {
   Delete,
   Query,
   ForbiddenException,
-  Header,
   Res
 } from "@nestjs/common"
 import type { Response } from "express"
@@ -47,10 +46,7 @@ export class RecipesController {
 
   @Public()
   @Get(":id/og")
-  async getOpenGraph(
-    @Param("id") id: string,
-    @Res() res: Response
-  ) {
+  async getOpenGraph(@Param("id") id: string, @Res() res: Response) {
     const recipe = await this.recipesService.findOne(id)
     const frontendUrl = this.configService.get<string>("FRONTEND_URL")
     const description = recipe.description
