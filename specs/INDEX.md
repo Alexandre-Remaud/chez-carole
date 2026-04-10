@@ -28,6 +28,7 @@ Application de gestion de recettes de cuisine. Monorepo avec backend NestJS (Mon
 | Profil utilisateur               | [profile.md](profile.md)                   | done   |
 | Favoris                          | [favorites.md](favorites.md)               | done   |
 | Notation & Avis                  | [ratings.md](ratings.md)                   | done   |
+| Partage & Liens publics          | [sharing.md](sharing.md)                   | done   |
 
 ### Priorité haute
 
@@ -38,7 +39,6 @@ Application de gestion de recettes de cuisine. Monorepo avec backend NestJS (Mon
 
 | Feature                          | Fichier                                    | Statut |
 | -------------------------------- | ------------------------------------------ | ------ |
-| Partage & Liens publics          | [sharing.md](sharing.md)                   | todo   |
 | Impression & Export PDF          | [print-export.md](print-export.md)         | todo   |
 | Liste de courses                 | [shopping-list.md](shopping-list.md)       | todo   |
 | Tags personnalisés               | [tags.md](tags.md)                         | todo   |
