@@ -9,6 +9,7 @@ import {
   Query,
   ForbiddenException
 } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
 import { RecipesService } from "./recipes.service"
 import { CreateRecipeDto } from "./dto/create-recipe.dto"
 import { UpdateRecipeDto } from "./dto/update-recipe.dto"
@@ -18,7 +19,10 @@ import { Role } from "../auth/role.enum"
 
 @Controller("recipes")
 export class RecipesController {
-  constructor(private readonly recipesService: RecipesService) {}
+  constructor(
+    private readonly recipesService: RecipesService,
+    private readonly configService: ConfigService
+  ) {}
 
   @Public()
   @Get()
@@ -36,6 +40,25 @@ export class RecipesController {
       limit ? parseInt(limit, 10) : 20,
       userId
     )
+  }
+
+  @Public()
+  @Get(":id/og")
+  async getOpenGraph(@Param("id") id: string) {
+    const recipe = await this.recipesService.findOne(id)
+    const frontendUrl = this.configService.get<string>("FRONTEND_URL")
+    const description = recipe.description
+      ? recipe.description.length > 160
+        ? recipe.description.slice(0, 157) + "..."
+        : recipe.description
+      : ""
+
+    return {
+      title: recipe.title,
+      description,
+      imageUrl: recipe.imageMediumUrl || recipe.imageUrl || null,
+      url: `${frontendUrl}/recipes/${id}`
+    }
   }
 
   @Public()

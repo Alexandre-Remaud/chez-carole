@@ -8,6 +8,8 @@ import ConfirmDialog from "@/components/ConfirmDialog"
 import type { Recipe } from "@recipes/contract"
 import { useAuth } from "@/features/auth/hooks"
 import FavoriteButton from "@/features/favorites/FavoriteButton"
+import ShareButton from "@/features/sharing/ShareButton"
+import RecipeHead from "@/features/sharing/RecipeHead"
 import ReviewSummary from "@/features/reviews/ReviewSummary"
 import ReviewForm from "@/features/reviews/ReviewForm"
 import ReviewList from "@/features/reviews/ReviewList"
@@ -68,6 +70,7 @@ export default function RecipeDetail() {
 
   return (
     <div className="max-w-5xl mx-auto">
+      <RecipeHead recipe={recipe} />
       <div className="flex items-center justify-between mb-6">
         <Link
           to="/recipes"
@@ -150,11 +153,18 @@ export default function RecipeDetail() {
         <h1 className="font-display text-2xl font-bold text-gray-800">
           {recipe.title}
         </h1>
-        <FavoriteButton
-          recipeId={recipe._id}
-          initialFavorited={recipe.isFavorited ?? false}
-          initialCount={recipe.favoritesCount ?? 0}
-        />
+        <div className="flex items-center gap-2">
+          <ShareButton
+            recipeId={recipe._id}
+            recipeTitle={recipe.title}
+            recipeDescription={recipe.description || ""}
+          />
+          <FavoriteButton
+            recipeId={recipe._id}
+            initialFavorited={recipe.isFavorited ?? false}
+            initialCount={recipe.favoritesCount ?? 0}
+          />
+        </div>
       </div>
 
       <div className="mb-2">
