@@ -1,4 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing"
+import { ConfigService } from "@nestjs/config"
 import { RecipesController } from "./recipes.controller"
 import { RecipesService } from "./recipes.service"
 import { CreateRecipeDto } from "./dto/create-recipe.dto"
@@ -29,6 +30,10 @@ const mockRecipesService = {
   remove: jest.fn()
 }
 
+const mockConfigService = {
+  get: jest.fn().mockReturnValue("http://localhost:5173")
+}
+
 describe("RecipesController", () => {
   let controller: RecipesController
 
@@ -39,6 +44,10 @@ describe("RecipesController", () => {
         {
           provide: RecipesService,
           useValue: mockRecipesService
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService
         }
       ]
     }).compile()
@@ -207,6 +216,89 @@ describe("RecipesController", () => {
 
       expect(mockRecipesService.remove).toHaveBeenCalledWith(VALID_ID)
       expect(result).toEqual(mockRecipe)
+    })
+  })
+
+  describe("getOpenGraph", () => {
+    it("should return OG metadata with correct title and url", async () => {
+      mockRecipesService.findOne.mockResolvedValue(mockRecipe)
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.title).toBe("Tarte aux pommes")
+      expect(result.url).toBe(`http://localhost:5173/recipes/${VALID_ID}`)
+    })
+
+    it("should truncate description to 160 chars", async () => {
+      const longDesc = "A".repeat(200)
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        description: longDesc
+      })
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.description).toBe("A".repeat(157) + "...")
+      expect(result.description.length).toBe(160)
+    })
+
+    it("should return full description when <= 160 chars", async () => {
+      const shortDesc = "Une tarte classique"
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        description: shortDesc
+      })
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.description).toBe(shortDesc)
+    })
+
+    it("should return empty description when recipe has no description", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        description: undefined
+      })
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.description).toBe("")
+    })
+
+    it("should prefer imageMediumUrl over imageUrl", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        imageMediumUrl: "http://img.test/medium.jpg",
+        imageUrl: "http://img.test/full.jpg"
+      })
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.imageUrl).toBe("http://img.test/medium.jpg")
+    })
+
+    it("should fallback to imageUrl when no imageMediumUrl", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        imageMediumUrl: undefined,
+        imageUrl: "http://img.test/full.jpg"
+      })
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.imageUrl).toBe("http://img.test/full.jpg")
+    })
+
+    it("should return null imageUrl when no images", async () => {
+      mockRecipesService.findOne.mockResolvedValue({
+        ...mockRecipe,
+        imageMediumUrl: undefined,
+        imageUrl: undefined
+      })
+
+      const result = await controller.getOpenGraph(VALID_ID)
+
+      expect(result.imageUrl).toBeNull()
     })
   })
 })
