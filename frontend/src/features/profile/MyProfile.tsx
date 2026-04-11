@@ -56,7 +56,10 @@ export default function MyProfile() {
   const loadFavorites = useCallback(async () => {
     setFavoritesLoading(true)
     try {
-      const result = await favoritesApi.getMyFavorites(favoritesSkip, RECIPES_LIMIT)
+      const result = await favoritesApi.getMyFavorites(
+        favoritesSkip,
+        RECIPES_LIMIT
+      )
       if (favoritesSkip === 0) {
         setFavorites(result.data)
       } else {
@@ -210,7 +213,7 @@ export default function MyProfile() {
                 {favorites.map((recipe) => (
                   <li
                     key={recipe._id}
-                    className="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow"
+                    className="relative bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow"
                   >
                     <Link
                       to="/recipes/$id"
@@ -225,22 +228,22 @@ export default function MyProfile() {
                           loading="lazy"
                         />
                       )}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-display text-lg font-semibold text-gray-800 truncate">
-                            {recipe.title}
-                          </h3>
-                          <FavoriteButton
-                            recipeId={recipe._id}
-                            initialFavorited={true}
-                            initialCount={recipe.favoritesCount ?? 0}
-                          />
-                        </div>
+                      <div className="min-w-0 flex-1 pr-10">
+                        <h3 className="font-display text-lg font-semibold text-gray-800 truncate">
+                          {recipe.title}
+                        </h3>
                         <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                           {recipe.description}
                         </p>
                       </div>
                     </Link>
+                    <div className="absolute top-5 right-5">
+                      <FavoriteButton
+                        recipeId={recipe._id}
+                        initialFavorited={true}
+                        initialCount={recipe.favoritesCount ?? 0}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>

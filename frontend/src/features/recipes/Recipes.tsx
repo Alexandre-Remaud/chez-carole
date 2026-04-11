@@ -157,24 +157,25 @@ export default function Recipes() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-3">
-                <div className="flex items-center gap-3">
-                  <RecipeBadges recipe={recipe} />
-                  {(recipe.averageRating ?? 0) > 0 && (
-                    <ReviewSummary
-                      averageRating={recipe.averageRating ?? 0}
-                      ratingsCount={recipe.ratingsCount ?? 0}
-                      compact
-                    />
-                  )}
-                </div>
-                <FavoriteButton
-                  recipeId={recipe._id}
-                  initialFavorited={recipe.isFavorited ?? false}
-                  initialCount={recipe.favoritesCount ?? 0}
-                />
+              <div className="flex items-center gap-3 mt-3">
+                <RecipeBadges recipe={recipe} />
+                {(recipe.averageRating ?? 0) > 0 && (
+                  <ReviewSummary
+                    averageRating={recipe.averageRating ?? 0}
+                    ratingsCount={recipe.ratingsCount ?? 0}
+                    compact
+                  />
+                )}
               </div>
             </Link>
+
+            <div className="absolute bottom-5 right-5">
+              <FavoriteButton
+                recipeId={recipe._id}
+                initialFavorited={recipe.isFavorited ?? false}
+                initialCount={recipe.favoritesCount ?? 0}
+              />
+            </div>
 
             {user && (user._id === recipe.userId || user.role === "admin") && (
               <button
