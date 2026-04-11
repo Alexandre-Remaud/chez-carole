@@ -462,8 +462,15 @@ export default function Layout() {
           <Outlet />
         </main>
 
-        <footer className="py-6 text-center text-sm text-gray-400 border-t border-gray-100">
-          La tablée de Carole — Vos recettes, simplement.
+        <footer className="mt-auto py-10 border-t border-gray-100">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span className="font-display text-sm text-gray-500 italic">
+              La tablée de Carole
+            </span>
+            <span className="text-xs text-gray-300 tracking-wide">
+              Vos recettes, simplement.
+            </span>
+          </div>
         </footer>
       </div>
     </>

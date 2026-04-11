@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap");
 
 @theme {
   --color-warm-50: #fdf8f3;
@@ -13,7 +13,7 @@
   --color-warm-800: #874727;
   --color-warm-900: #6d3b22;
 
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Outfit", system-ui, sans-serif;
   --font-display: "Playfair Display", Georgia, serif;
 }
 
@@ -26,6 +26,9 @@
   body {
     @apply bg-warm-50 text-gray-800 font-sans leading-relaxed;
     min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 65% 45% at 100% 0%, rgba(230, 160, 94, 0.10) 0%, transparent 100%),
+      radial-gradient(ellipse 45% 30% at 0% 100%, rgba(167, 87, 40, 0.07) 0%, transparent 100%);
   }
 
   ::selection {

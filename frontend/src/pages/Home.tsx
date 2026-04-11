@@ -63,11 +63,16 @@ export default function Home() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="text-center py-10 mb-6">
-        <h1 className="font-display text-4xl font-bold text-gray-800 mb-2">
-          Bienvenue à la tablée de Carole
+      <div className="text-center py-12 mb-10">
+        <p className="text-xs font-semibold tracking-[0.25em] text-warm-500 uppercase mb-4">
+          Collection de recettes
+        </p>
+        <h1 className="font-display text-5xl sm:text-6xl font-bold text-gray-800 mb-4 leading-tight">
+          La tablée
+          <br />
+          <span className="italic font-display text-warm-600">de Carole</span>
         </h1>
-        <p className="text-gray-500 text-lg">
+        <p className="text-gray-400 max-w-xs mx-auto text-sm tracking-wide">
           Retrouvez toutes vos recettes au même endroit.
         </p>
       </div>
@@ -86,46 +91,66 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <h2 className="font-display text-xl font-semibold text-gray-800 mb-4">
-            Dernières recettes
-          </h2>
+          <div className="flex items-center gap-3 mb-6">
+            <span className="w-6 h-px bg-warm-400" />
+            <h2 className="font-display text-xl font-semibold text-gray-800">
+              Dernières recettes
+            </h2>
+          </div>
 
-          <ul className="grid gap-4">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {recipes.map((recipe) => (
               <li
                 key={recipe._id}
-                className="relative bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow"
+                className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
                 <Link
                   to="/recipes/$id"
                   params={{ id: recipe._id }}
                   className="block"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    {recipe.imageThumbnailUrl && (
+                  <div className="relative aspect-[4/3] bg-warm-50 overflow-hidden">
+                    {recipe.imageThumbnailUrl ? (
                       <img
                         src={recipe.imageThumbnailUrl}
                         alt={recipe.title}
-                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <svg
+                          width="36"
+                          height="36"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-warm-300"
+                        >
+                          <path d="M15 11h.01" />
+                          <path d="M11 15h.01" />
+                          <path d="M16 16h.01" />
+                          <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16" />
+                          <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4" />
+                        </svg>
+                      </div>
                     )}
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-display text-lg font-semibold text-gray-800 truncate">
-                        {recipe.title}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                        {recipe.description}
-                      </p>
-                    </div>
                   </div>
-
-                  <div className="mt-3">
+                  <div className="p-4">
+                    <h3 className="font-display text-base font-semibold text-gray-800 mb-1 line-clamp-2 leading-snug">
+                      {recipe.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 line-clamp-2 mb-3 leading-relaxed">
+                      {recipe.description}
+                    </p>
                     <RecipeBadges recipe={recipe} />
                   </div>
                 </Link>
 
-                <div className="absolute bottom-5 right-5">
+                <div className="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-2 py-1 shadow-sm">
                   <FavoriteButton
                     recipeId={recipe._id}
                     initialFavorited={recipe.isFavorited ?? false}
@@ -138,12 +163,12 @@ export default function Home() {
                     <button
                       type="button"
                       onClick={() => setDeletingId(recipe._id)}
-                      className="absolute top-4 right-4 p-1.5 text-gray-300 hover:text-red-500 transition-colors"
+                      className="absolute top-2.5 left-2.5 p-1.5 bg-white/90 rounded-full shadow-sm text-gray-400 hover:text-red-500 transition-colors"
                       aria-label={`Supprimer ${recipe.title}`}
                     >
                       <svg
-                        width="18"
-                        height="18"
+                        width="14"
+                        height="14"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -164,12 +189,15 @@ export default function Home() {
           </ul>
 
           {total > HOME_LIMIT && (
-            <div className="text-center mt-6">
+            <div className="text-center mt-8">
               <Link
                 to="/recipes"
-                className="text-sm font-medium text-warm-600 hover:text-warm-700 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-medium text-warm-600 hover:text-warm-700 transition-colors group"
               >
-                Voir toutes les recettes ({total})
+                Voir toutes les recettes
+                <span className="text-warm-400 group-hover:translate-x-0.5 transition-transform">
+                  ({total})
+                </span>
               </Link>
             </div>
           )}
