@@ -227,23 +227,21 @@ describe("RecipesService", () => {
   describe("update", () => {
     it("should update and return the recipe", async () => {
       const dto: UpdateRecipeDto = { title: "Tarte revisitée" }
-      const updated = { ...mockRecipe, ...dto }
-      mockRecipeModel.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(updated)
+      const mockSave = jest.fn().mockResolvedValue(undefined)
+      const existingRecipe = { ...mockRecipe, save: mockSave }
+      mockRecipeModel.findById.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(existingRecipe)
       })
 
       const result = await service.update(VALID_ID, dto)
 
-      expect(mockRecipeModel.findByIdAndUpdate).toHaveBeenCalledWith(
-        VALID_ID,
-        dto,
-        { new: true }
-      )
-      expect(result).toEqual(updated)
+      expect(mockRecipeModel.findById).toHaveBeenCalledWith(VALID_ID)
+      expect(mockSave).toHaveBeenCalled()
+      expect(result).toMatchObject({ title: "Tarte revisitée" })
     })
 
     it("should throw NotFoundException if recipe not found", async () => {
-      mockRecipeModel.findByIdAndUpdate.mockReturnValue({
+      mockRecipeModel.findById.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null)
       })
 

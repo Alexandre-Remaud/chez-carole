@@ -5,7 +5,7 @@ import { AuthService } from "./auth.service"
 import { Role } from "./role.enum"
 import type { Response, Request } from "express"
 
-jest.mock("../main", () => ({
+jest.mock("./utils/cookies.util", () => ({
   setAuthCookies: jest.fn(),
   clearAuthCookies: jest.fn(),
   setRefreshCookie: jest.fn(),
