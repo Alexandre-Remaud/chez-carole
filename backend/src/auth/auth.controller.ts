@@ -20,7 +20,7 @@ import {
   clearAuthCookies,
   setRefreshCookie,
   clearRefreshCookie
-} from "../main"
+} from "./utils/cookies.util"
 import type { JwtPayload } from "./auth.service"
 
 @Controller("auth")
