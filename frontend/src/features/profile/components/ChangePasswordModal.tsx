@@ -1,12 +1,23 @@
-import { useState, type FormEvent } from "react"
+import { useState, useEffect, type FormEvent } from "react"
 import { changePasswordSchema } from "../schema"
 
 type Props = {
-  onSave: (data: { currentPassword: string; newPassword: string }) => Promise<void>
+  onSave: (data: {
+    currentPassword: string
+    newPassword: string
+  }) => Promise<void>
   onClose: () => void
 }
 
 export default function ChangePasswordModal({ onSave, onClose }: Props) {
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [onClose])
+
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -35,7 +46,9 @@ export default function ChangePasswordModal({ onSave, onClose }: Props) {
     try {
       await onSave({ currentPassword, newPassword })
     } catch (err) {
-      setErrors({ form: err instanceof Error ? err.message : "Une erreur est survenue" })
+      setErrors({
+        form: err instanceof Error ? err.message : "Une erreur est survenue"
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -47,16 +60,25 @@ export default function ChangePasswordModal({ onSave, onClose }: Props) {
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="change-password-title"
         className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-display text-lg font-semibold text-gray-800 mb-4">
+        <h2
+          id="change-password-title"
+          className="font-display text-lg font-semibold text-gray-800 mb-4"
+        >
           Changer le mot de passe
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="currentPassword"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Mot de passe actuel
             </label>
             <input
@@ -67,12 +89,17 @@ export default function ChangePasswordModal({ onSave, onClose }: Props) {
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-warm-300 focus:border-warm-400"
             />
             {errors.currentPassword && (
-              <p className="mt-1 text-xs text-red-500">{errors.currentPassword}</p>
+              <p className="mt-1 text-xs text-red-500">
+                {errors.currentPassword}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="newPassword"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Nouveau mot de passe
             </label>
             <input
@@ -88,7 +115,10 @@ export default function ChangePasswordModal({ onSave, onClose }: Props) {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Confirmer le nouveau mot de passe
             </label>
             <input
@@ -99,13 +129,13 @@ export default function ChangePasswordModal({ onSave, onClose }: Props) {
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-warm-300 focus:border-warm-400"
             />
             {errors.confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
+              <p className="mt-1 text-xs text-red-500">
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 
-          {errors.form && (
-            <p className="text-sm text-red-500">{errors.form}</p>
-          )}
+          {errors.form && <p className="text-sm text-red-500">{errors.form}</p>}
 
           <div className="flex justify-end gap-3 pt-2">
             <button
