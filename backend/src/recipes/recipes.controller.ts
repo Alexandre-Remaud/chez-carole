@@ -87,6 +87,7 @@ ${image ? `<meta name="twitter:image" content="${escHtml(image)}" />` : ""}
 </html>`
 
     res.setHeader("Content-Type", "text/html; charset=utf-8")
+    res.setHeader("Cache-Control", "public, max-age=3600")
     res.send(html)
   }
 

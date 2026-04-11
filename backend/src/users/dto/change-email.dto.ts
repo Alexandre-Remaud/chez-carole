@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer"
 import { IsEmail, IsNotEmpty, IsString } from "class-validator"
 
 const EMAIL_OPTIONS = {
@@ -8,6 +9,7 @@ const EMAIL_OPTIONS = {
 }
 
 export class ChangeEmailDto {
+  @Transform(({ value }: { value: string }) => value?.toLowerCase().trim())
   @IsEmail(EMAIL_OPTIONS, { message: "Adresse email invalide" })
   newEmail: string
 

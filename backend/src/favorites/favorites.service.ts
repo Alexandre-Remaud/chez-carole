@@ -113,7 +113,11 @@ export class FavoritesService {
     })
   }
 
-  async isFavorited(userId: string, recipeId: string): Promise<boolean> {
+  async isFavorited(
+    userId: string | undefined,
+    recipeId: string
+  ): Promise<boolean> {
+    if (!userId) return false
     this.validateObjectId(recipeId)
     const favorite = await this.favoriteModel
       .findOne({

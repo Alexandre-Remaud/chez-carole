@@ -10,6 +10,7 @@ import {
   HttpStatus
 } from "@nestjs/common"
 import { FileInterceptor } from "@nestjs/platform-express"
+import { Throttle } from "@nestjs/throttler"
 import { UploadService } from "./upload.service.js"
 import { CurrentUser } from "../auth/decorators/current-user.decorator.js"
 import type { JwtPayload } from "../auth/auth.service.js"
@@ -57,6 +58,7 @@ export class UploadController {
 
   @Delete("image/:publicId")
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   async deleteImage(
     @Param("publicId") publicId: string,
     @CurrentUser() user: JwtPayload

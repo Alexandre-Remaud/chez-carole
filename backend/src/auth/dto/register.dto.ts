@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer"
 import {
   IsEmail,
   IsNotEmpty,
@@ -14,6 +15,7 @@ const EMAIL_OPTIONS = {
 }
 
 export class RegisterDto {
+  @Transform(({ value }: { value: string }) => value?.toLowerCase().trim())
   @IsEmail(EMAIL_OPTIONS, { message: "Adresse email invalide" })
   email: string
 
