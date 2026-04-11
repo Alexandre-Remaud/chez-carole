@@ -2,16 +2,8 @@ import { useState, useEffect, type ReactNode } from "react"
 import type { User } from "./contract"
 import { authApi } from "./api"
 import { AuthContext } from "./context"
+import type { AuthContextType } from "./context"
 import { ApiError } from "@/lib/api-client"
-
-interface AuthContextType {
-  user: User | null
-  isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, name: string) => Promise<void>
-  logout: () => Promise<void>
-  refreshUser: () => Promise<void>
-}
 
 function toUser(userData: User): User {
   return {
@@ -89,7 +81,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, refreshUser } as AuthContextType}>
+    <AuthContext.Provider
+      value={
+        {
+          user,
+          isLoading,
+          login,
+          register,
+          logout,
+          refreshUser
+        } as AuthContextType
+      }
+    >
       {children}
     </AuthContext.Provider>
   )

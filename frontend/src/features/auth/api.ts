@@ -32,10 +32,13 @@ export const authApi = {
   },
 
   async refresh() {
-    const response = await apiFetch<{ message: string }>(`${API_URL}/auth/refresh`, {
-      method: "POST",
-      credentials: "include"
-    })
+    const response = await apiFetch<{ message: string }>(
+      `${API_URL}/auth/refresh`,
+      {
+        method: "POST",
+        credentials: "include"
+      }
+    )
     return response
   },
 
@@ -47,13 +50,10 @@ export const authApi = {
   },
 
   async getProfile(): Promise<User> {
-    const response = await apiFetch<{ id: string; email: string; role: string }>(
-      `${API_URL}/auth/me`,
-      {
-        method: "GET",
-        credentials: "include"
-      }
-    )
-    return response as unknown as User
+    const response = await apiFetch<User>(`${API_URL}/auth/me`, {
+      method: "GET",
+      credentials: "include"
+    })
+    return response
   }
 }
