@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing"
 import { ReviewsController } from "./reviews.controller"
 import { ReviewsService } from "./reviews.service"
+import { Role } from "../auth/role.enum"
 
 const mockReviewsService = {
   createReview: jest.fn(),
@@ -65,11 +66,15 @@ describe("ReviewsController", () => {
     it("should delegate to service with userId and role", async () => {
       mockReviewsService.deleteReview.mockResolvedValue({ deleted: true })
 
-      const result = await controller.deleteReview("review-1", "user-1", "user")
+      const result = await controller.deleteReview(
+        "review-1",
+        "user-1",
+        Role.USER
+      )
 
       expect(mockReviewsService.deleteReview).toHaveBeenCalledWith(
         "user-1",
-        "user",
+        Role.USER,
         "review-1"
       )
       expect(result).toEqual({ deleted: true })

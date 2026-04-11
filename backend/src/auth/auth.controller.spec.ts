@@ -17,7 +17,7 @@ import {
   clearAuthCookies,
   setRefreshCookie,
   clearRefreshCookie
-} from "../main"
+} from "./utils/cookies.util"
 
 describe("AuthController", () => {
   let controller: AuthController

@@ -11,6 +11,7 @@ import { ReviewsService } from "./reviews.service"
 import { Review } from "./entities/review.entity"
 import { Recipe } from "../recipes/entities/recipe.entity"
 import { User } from "../users/entities/user.entity"
+import { Role } from "../auth/role.enum"
 
 const VALID_ID = "507f1f77bcf86cd799439011"
 const VALID_ID_2 = "507f1f77bcf86cd799439012"
@@ -229,7 +230,7 @@ describe("ReviewsService", () => {
         exec: jest.fn().mockResolvedValue(null)
       })
 
-      const result = await service.deleteReview(VALID_ID_2, "user", VALID_ID)
+      const result = await service.deleteReview(VALID_ID_2, Role.USER, VALID_ID)
 
       expect(result).toEqual({ deleted: true })
       expect(mockReviewModel.findByIdAndDelete).toHaveBeenCalledWith(VALID_ID)
@@ -254,7 +255,11 @@ describe("ReviewsService", () => {
         exec: jest.fn().mockResolvedValue(null)
       })
 
-      const result = await service.deleteReview(VALID_ID_2, "admin", VALID_ID)
+      const result = await service.deleteReview(
+        VALID_ID_2,
+        Role.ADMIN,
+        VALID_ID
+      )
 
       expect(result).toEqual({ deleted: true })
     })
@@ -265,7 +270,7 @@ describe("ReviewsService", () => {
       })
 
       await expect(
-        service.deleteReview(VALID_ID_2, "user", VALID_ID)
+        service.deleteReview(VALID_ID_2, Role.USER, VALID_ID)
       ).rejects.toThrow(NotFoundException)
     })
 
@@ -279,13 +284,13 @@ describe("ReviewsService", () => {
       })
 
       await expect(
-        service.deleteReview(VALID_ID_2, "user", VALID_ID)
+        service.deleteReview(VALID_ID_2, Role.USER, VALID_ID)
       ).rejects.toThrow(ForbiddenException)
     })
 
     it("should throw BadRequestException for invalid review ID", async () => {
       await expect(
-        service.deleteReview(VALID_ID_2, "user", INVALID_ID)
+        service.deleteReview(VALID_ID_2, Role.USER, INVALID_ID)
       ).rejects.toThrow(BadRequestException)
     })
   })

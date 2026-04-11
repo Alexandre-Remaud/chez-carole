@@ -28,8 +28,22 @@
           },
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | { read -r f; [[ \"$f\" == */backend/src/*.ts ]] || exit 0; cd /Users/alexandreremaud/Work/latableedecarole/backend && pnpm exec eslint --fix \"$f\" 2>/dev/null || true; }",
-            "statusMessage": "ESLint backend..."
+            "command": "jq -r '.tool_input.file_path' | { read -r f; [[ \"$f\" == *.ts || \"$f\" == *.tsx ]] || exit 0; if [[ \"$f\" == */backend/* ]]; then cd /Users/alexandreremaud/Work/latableedecarole/backend && pnpm exec eslint --fix \"$f\" 2>/dev/null || true; elif [[ \"$f\" == */frontend/* ]]; then cd /Users/alexandreremaud/Work/latableedecarole/frontend && pnpm exec eslint --fix \"$f\" 2>/dev/null || true; fi; }",
+            "statusMessage": "ESLint..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; [[ \"$f\" == *.ts || \"$f\" == *.tsx ]] || exit 0; if [[ \"$f\" == */backend/* ]]; then cd /Users/alexandreremaud/Work/latableedecarole/backend && npx tsc --noEmit 2>&1 | tail -5 || true; elif [[ \"$f\" == */frontend/* ]]; then cd /Users/alexandreremaud/Work/latableedecarole/frontend && npx tsc --noEmit 2>&1 | tail -5 || true; fi; }",
+            "statusMessage": "TypeCheck...",
+            "async": true,
+            "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; [[ \"$f\" == *.ts || \"$f\" == *.tsx ]] || exit 0; if [[ \"$f\" == */backend/* ]]; then cd /Users/alexandreremaud/Work/latableedecarole/backend && pnpm test 2>&1 | tail -10 || true; elif [[ \"$f\" == */frontend/* ]]; then cd /Users/alexandreremaud/Work/latableedecarole/frontend && pnpm test 2>&1 | tail -10 || true; fi; }",
+            "statusMessage": "Tests...",
+            "async": true,
+            "timeout": 120
           }
         ]
       }
