@@ -118,7 +118,7 @@ export default function ImageUpload({ value, onChange }: ImageUploadProps) {
             type="button"
             onClick={handleDelete}
             className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
-            title="Supprimer l'image"
+            aria-label="Supprimer l'image"
           >
             <svg
               width="16"
@@ -139,6 +139,8 @@ export default function ImageUpload({ value, onChange }: ImageUploadProps) {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onDragOver={(e) => {
         e.preventDefault()
         setIsDragging(true)
@@ -146,6 +148,13 @@ export default function ImageUpload({ value, onChange }: ImageUploadProps) {
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          inputRef.current?.click()
+        }
+      }}
+      aria-label="Zone d'upload d'image. Glissez une image ou appuyez sur Entrée pour choisir un fichier."
       className={`flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
         isDragging
           ? "border-warm-500 bg-warm-50"

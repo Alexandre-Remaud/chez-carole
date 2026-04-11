@@ -8,7 +8,7 @@ const MORE_CATEGORIES = [
   { value: "side_dish", label: "Accompagnements" },
   { value: "snack", label: "Collations" },
   { value: "beverage", label: "Boissons" },
-  { value: "sauce", label: "Sauces" },
+  { value: "sauce", label: "Sauces" }
 ] as const
 
 export default function Layout() {
@@ -26,7 +26,10 @@ export default function Layout() {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
         setMoreOpen(false)
       }
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      ) {
         setUserMenuOpen(false)
       }
     }
@@ -237,7 +240,9 @@ export default function Layout() {
                               <p className="text-sm font-medium text-gray-900 truncate">
                                 {user.name}
                               </p>
-                              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {user.email}
+                              </p>
                             </div>
                             <Link
                               to="/profile"
@@ -283,13 +288,31 @@ export default function Layout() {
               onClick={() => setMobileMenuOpen((o) => !o)}
               className="lg:hidden p-2 text-gray-600 hover:text-warm-600 transition-colors"
               aria-label="Menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {mobileMenuOpen ? (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
               ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
                   <path d="M4 12h16M4 6h16M4 18h16" />
                 </svg>
               )}
@@ -298,7 +321,10 @@ export default function Layout() {
 
           {/* Mobile menu */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-gray-100 bg-white">
+            <div
+              id="mobile-menu"
+              className="lg:hidden border-t border-gray-100 bg-white"
+            >
               <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-4">
                 {/* Mobile search */}
                 <form onSubmit={handleSearch}>
@@ -329,13 +355,28 @@ export default function Layout() {
 
                 {/* Mobile categories */}
                 <nav className="flex flex-wrap gap-2">
-                  <Link to="/recipes" search={{ category: "starter" }} onClick={closeAll} className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-warm-50 hover:text-warm-600 transition-colors">
+                  <Link
+                    to="/recipes"
+                    search={{ category: "starter" }}
+                    onClick={closeAll}
+                    className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-warm-50 hover:text-warm-600 transition-colors"
+                  >
                     Entrées
                   </Link>
-                  <Link to="/recipes" search={{ category: "main_course" }} onClick={closeAll} className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-warm-50 hover:text-warm-600 transition-colors">
+                  <Link
+                    to="/recipes"
+                    search={{ category: "main_course" }}
+                    onClick={closeAll}
+                    className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-warm-50 hover:text-warm-600 transition-colors"
+                  >
                     Plats
                   </Link>
-                  <Link to="/recipes" search={{ category: "dessert" }} onClick={closeAll} className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-warm-50 hover:text-warm-600 transition-colors">
+                  <Link
+                    to="/recipes"
+                    search={{ category: "dessert" }}
+                    onClick={closeAll}
+                    className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-warm-50 hover:text-warm-600 transition-colors"
+                  >
                     Desserts
                   </Link>
                   {MORE_CATEGORIES.map((cat) => (
@@ -361,7 +402,15 @@ export default function Layout() {
                           onClick={closeAll}
                           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-warm-600 rounded-xl hover:bg-warm-700 transition-colors"
                         >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                          >
                             <path d="M12 5v14M5 12h14" />
                           </svg>
                           Ajouter une recette
@@ -375,7 +424,10 @@ export default function Layout() {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => { handleLogout(); closeAll() }}
+                          onClick={() => {
+                            handleLogout()
+                            closeAll()
+                          }}
                           className="px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-colors"
                         >
                           Déconnexion

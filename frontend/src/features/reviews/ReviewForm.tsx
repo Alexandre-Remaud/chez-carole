@@ -70,15 +70,13 @@ export default function ReviewForm({
         {existingReview ? "Modifier votre avis" : "Laisser un avis"}
       </h3>
 
-      <div className="mb-3">
-        <label className="block text-sm text-gray-600 mb-1">
-          Votre note
-        </label>
+      <fieldset className="mb-3 border-none p-0">
+        <legend className="block text-sm text-gray-600 mb-1">Votre note</legend>
         <StarRating value={rating} onChange={handleRatingChange} size="lg" />
         {errors.rating && (
           <p className="text-xs text-red-500 mt-1">{errors.rating.message}</p>
         )}
-      </div>
+      </fieldset>
 
       <div className="mb-4">
         <label
@@ -105,11 +103,7 @@ export default function ReviewForm({
         disabled={isLoading || rating === 0}
         className="px-5 py-2 text-sm font-medium text-white bg-warm-600 rounded-xl hover:bg-warm-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading
-          ? "Envoi..."
-          : existingReview
-            ? "Mettre à jour"
-            : "Publier"}
+        {isLoading ? "Envoi..." : existingReview ? "Mettre à jour" : "Publier"}
       </button>
     </form>
   )
