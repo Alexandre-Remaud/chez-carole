@@ -14,8 +14,10 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShoppingListsIndexRouteImport } from './routes/shopping-lists/index'
 import { Route as RecipesIndexRouteImport } from './routes/recipes/index'
 import { Route as UsersIdRouteImport } from './routes/users/$id'
+import { Route as ShoppingListsIdRouteImport } from './routes/shopping-lists/$id'
 import { Route as RecipesAddRouteImport } from './routes/recipes/add'
 import { Route as RecipesIdRouteImport } from './routes/recipes/$id'
 import { Route as RecipesIdEditRouteImport } from './routes/recipes/$id_.edit'
@@ -45,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShoppingListsIndexRoute = ShoppingListsIndexRouteImport.update({
+  id: '/shopping-lists/',
+  path: '/shopping-lists/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecipesIndexRoute = RecipesIndexRouteImport.update({
   id: '/recipes/',
   path: '/recipes/',
@@ -53,6 +60,11 @@ const RecipesIndexRoute = RecipesIndexRouteImport.update({
 const UsersIdRoute = UsersIdRouteImport.update({
   id: '/users/$id',
   path: '/users/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShoppingListsIdRoute = ShoppingListsIdRouteImport.update({
+  id: '/shopping-lists/$id',
+  path: '/shopping-lists/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecipesAddRoute = RecipesAddRouteImport.update({
@@ -79,8 +91,10 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/recipes/$id': typeof RecipesIdRoute
   '/recipes/add': typeof RecipesAddRoute
+  '/shopping-lists/$id': typeof ShoppingListsIdRoute
   '/users/$id': typeof UsersIdRoute
   '/recipes/': typeof RecipesIndexRoute
+  '/shopping-lists/': typeof ShoppingListsIndexRoute
   '/recipes/$id/edit': typeof RecipesIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -91,8 +105,10 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/recipes/$id': typeof RecipesIdRoute
   '/recipes/add': typeof RecipesAddRoute
+  '/shopping-lists/$id': typeof ShoppingListsIdRoute
   '/users/$id': typeof UsersIdRoute
   '/recipes': typeof RecipesIndexRoute
+  '/shopping-lists': typeof ShoppingListsIndexRoute
   '/recipes/$id/edit': typeof RecipesIdEditRoute
 }
 export interface FileRoutesById {
@@ -104,8 +120,10 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/recipes/$id': typeof RecipesIdRoute
   '/recipes/add': typeof RecipesAddRoute
+  '/shopping-lists/$id': typeof ShoppingListsIdRoute
   '/users/$id': typeof UsersIdRoute
   '/recipes/': typeof RecipesIndexRoute
+  '/shopping-lists/': typeof ShoppingListsIndexRoute
   '/recipes/$id_/edit': typeof RecipesIdEditRoute
 }
 export interface FileRouteTypes {
@@ -118,8 +136,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/recipes/$id'
     | '/recipes/add'
+    | '/shopping-lists/$id'
     | '/users/$id'
     | '/recipes/'
+    | '/shopping-lists/'
     | '/recipes/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -130,8 +150,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/recipes/$id'
     | '/recipes/add'
+    | '/shopping-lists/$id'
     | '/users/$id'
     | '/recipes'
+    | '/shopping-lists'
     | '/recipes/$id/edit'
   id:
     | '__root__'
@@ -142,8 +164,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/recipes/$id'
     | '/recipes/add'
+    | '/shopping-lists/$id'
     | '/users/$id'
     | '/recipes/'
+    | '/shopping-lists/'
     | '/recipes/$id_/edit'
   fileRoutesById: FileRoutesById
 }
@@ -155,8 +179,10 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   RecipesIdRoute: typeof RecipesIdRoute
   RecipesAddRoute: typeof RecipesAddRoute
+  ShoppingListsIdRoute: typeof ShoppingListsIdRoute
   UsersIdRoute: typeof UsersIdRoute
   RecipesIndexRoute: typeof RecipesIndexRoute
+  ShoppingListsIndexRoute: typeof ShoppingListsIndexRoute
   RecipesIdEditRoute: typeof RecipesIdEditRoute
 }
 
@@ -197,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shopping-lists/': {
+      id: '/shopping-lists/'
+      path: '/shopping-lists'
+      fullPath: '/shopping-lists/'
+      preLoaderRoute: typeof ShoppingListsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recipes/': {
       id: '/recipes/'
       path: '/recipes'
@@ -209,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/users/$id'
       fullPath: '/users/$id'
       preLoaderRoute: typeof UsersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopping-lists/$id': {
+      id: '/shopping-lists/$id'
+      path: '/shopping-lists/$id'
+      fullPath: '/shopping-lists/$id'
+      preLoaderRoute: typeof ShoppingListsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recipes/add': {
@@ -243,8 +283,10 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   RecipesIdRoute: RecipesIdRoute,
   RecipesAddRoute: RecipesAddRoute,
+  ShoppingListsIdRoute: ShoppingListsIdRoute,
   UsersIdRoute: UsersIdRoute,
   RecipesIndexRoute: RecipesIndexRoute,
+  ShoppingListsIndexRoute: ShoppingListsIndexRoute,
   RecipesIdEditRoute: RecipesIdEditRoute,
 }
 export const routeTree = rootRouteImport
