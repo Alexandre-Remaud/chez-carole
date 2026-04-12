@@ -11,7 +11,7 @@ import { useAuth } from "@/features/auth/hooks"
 import FavoriteButton from "@/features/favorites/FavoriteButton"
 import ReviewSummary from "@/features/reviews/ReviewSummary"
 
-const LIMIT = 20
+const LIMIT = 21
 
 function getPageTitle(category?: string, search?: string) {
   if (search) return `Résultats pour "${search}"`

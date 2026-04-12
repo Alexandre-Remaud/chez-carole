@@ -8,7 +8,7 @@ import type { Recipe } from "@recipes/contract"
 import { useAuth } from "@/features/auth/hooks"
 import FavoriteButton from "@/features/favorites/FavoriteButton"
 
-const HOME_LIMIT = 10
+const HOME_LIMIT = 12
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
