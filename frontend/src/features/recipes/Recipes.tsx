@@ -36,7 +36,7 @@ export default function Recipes() {
     setSkip(0)
     setTotal(0)
     recipeService
-      .getRecipes(category, search, 0)
+      .getRecipes(category, search, 0, LIMIT)
       .then(({ data, total }) => {
         setRecipes(data)
         setTotal(total)
@@ -52,7 +52,8 @@ export default function Recipes() {
       const { data, total: newTotal } = await recipeService.getRecipes(
         category,
         search,
-        skip
+        skip,
+        LIMIT
       )
       setRecipes((prev) => [...prev, ...data])
       setTotal(newTotal)
