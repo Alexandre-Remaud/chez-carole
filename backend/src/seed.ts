@@ -1130,6 +1130,217 @@ function buildRecipes(userIds: Types.ObjectId[]) {
           temperatureUnit: "C"
         }
       ]
+    },
+    // ── Recettes supplémentaires ──────────────────────────────────────────────
+    {
+      title: "Madeleines au Citron",
+      description:
+        "Des madeleines moelleuses avec une belle bosse, parfumées au zeste de citron et légèrement dorées. Idéales pour le goûter.",
+      userId: caroleId,
+      category: "snack",
+      difficulty: "easy",
+      servings: 12,
+      prepTime: 15,
+      cookTime: 12,
+      imageUrl: IMG,
+      imageThumbnailUrl: THUMB,
+      imageMediumUrl: MEDIUM,
+      averageRating: 0,
+      ratingsCount: 0,
+      ingredients: [
+        { name: "Œufs", quantity: 2, unit: "pièce(s)" },
+        { name: "Sucre en poudre", quantity: 100, unit: "g" },
+        { name: "Farine T45", quantity: 120, unit: "g" },
+        { name: "Beurre doux fondu", quantity: 100, unit: "g" },
+        { name: "Levure chimique", quantity: 1, unit: "cc" },
+        { name: "Zeste de citron", quantity: 1, unit: "pièce(s)" },
+        { name: "Extrait de vanille", quantity: 1, unit: "cc" }
+      ],
+      steps: [
+        {
+          order: 1,
+          instruction:
+            "Fouetter les œufs avec le sucre jusqu'à ce que le mélange blanchisse et double de volume.",
+          duration: 5,
+          durationUnit: "min"
+        },
+        {
+          order: 2,
+          instruction:
+            "Incorporer la farine et la levure tamisées, puis le beurre fondu refroidi et le zeste. Réfrigérer la pâte 1 h.",
+          duration: 5,
+          durationUnit: "min",
+          note: "Le choc thermique entre la pâte froide et le moule chaud est le secret de la bosse des madeleines."
+        },
+        {
+          order: 3,
+          instruction:
+            "Remplir les empreintes beurrées et farinées aux 3/4 et cuire au four préchauffé.",
+          temperature: 220,
+          temperatureUnit: "C",
+          duration: 12,
+          durationUnit: "min"
+        }
+      ]
+    },
+    {
+      title: "Pistou Provençal",
+      description:
+        "Le pistou, cousin marseillais du pesto génois. Basilic frais, ail et huile d'olive — à mélanger à une soupe de légumes ou des pâtes.",
+      userId: sophieId,
+      category: "sauce",
+      difficulty: "easy",
+      servings: 4,
+      prepTime: 10,
+      cookTime: 0,
+      imageUrl: IMG,
+      imageThumbnailUrl: THUMB,
+      imageMediumUrl: MEDIUM,
+      averageRating: 0,
+      ratingsCount: 0,
+      ingredients: [
+        { name: "Basilic frais (grandes feuilles)", quantity: 50, unit: "g" },
+        { name: "Gousses d'ail", quantity: 3, unit: "pièce(s)" },
+        { name: "Huile d'olive extra vierge", quantity: 8, unit: "cs" },
+        { name: "Parmesan râpé", quantity: 30, unit: "g" },
+        { name: "Sel fin", quantity: 1, unit: "pincée" }
+      ],
+      steps: [
+        {
+          order: 1,
+          instruction:
+            "Piler l'ail dans un mortier avec le sel jusqu'à obtenir une pâte.",
+          duration: 3,
+          durationUnit: "min",
+          note: "Le mortier en pierre est traditionnel — le mixeur donne une texture moins rustique mais acceptable."
+        },
+        {
+          order: 2,
+          instruction:
+            "Ajouter les feuilles de basilic et continuer à piler en incorporant l'huile en filet.",
+          duration: 5,
+          durationUnit: "min"
+        },
+        {
+          order: 3,
+          instruction:
+            "Incorporer le parmesan, ajuster l'assaisonnement et utiliser immédiatement."
+        }
+      ]
+    },
+    {
+      title: "Potée Auvergnate",
+      description:
+        "Le grand plat d'hiver du Massif Central : chou, légumes racines et viande de porc mijotés longuement dans un bouillon parfumé.",
+      userId: lucasId,
+      category: "main_course",
+      difficulty: "medium",
+      servings: 6,
+      prepTime: 25,
+      cookTime: 120,
+      imageUrl: IMG,
+      imageThumbnailUrl: THUMB,
+      imageMediumUrl: MEDIUM,
+      averageRating: 0,
+      ratingsCount: 0,
+      ingredients: [
+        { name: "Palette de porc demi-sel", quantity: 800, unit: "g" },
+        { name: "Saucisses fumées", quantity: 300, unit: "g" },
+        { name: "Chou vert frisé", quantity: 1, unit: "pièce(s)" },
+        { name: "Pommes de terre", quantity: 600, unit: "g" },
+        { name: "Carottes", quantity: 3, unit: "pièce(s)" },
+        { name: "Poireaux", quantity: 2, unit: "pièce(s)" },
+        { name: "Navet", quantity: 1, unit: "pièce(s)" },
+        { name: "Bouquet garni", quantity: 1, unit: "pièce(s)" }
+      ],
+      steps: [
+        {
+          order: 1,
+          instruction:
+            "Dessaler la palette en la faisant tremper dans l'eau froide pendant 2 h.",
+          duration: 120,
+          durationUnit: "min",
+          note: "Changer l'eau 1 à 2 fois pour mieux dessaler la viande."
+        },
+        {
+          order: 2,
+          instruction:
+            "Couvrir la viande d'eau froide, porter à ébullition, écumer, ajouter le bouquet garni et cuire à frémissement.",
+          duration: 60,
+          durationUnit: "min"
+        },
+        {
+          order: 3,
+          instruction:
+            "Ajouter les légumes (sauf les pommes de terre) et les saucisses, poursuivre la cuisson.",
+          duration: 30,
+          durationUnit: "min"
+        },
+        {
+          order: 4,
+          instruction:
+            "Ajouter les pommes de terre en dernier et cuire jusqu'à tendreté.",
+          duration: 30,
+          durationUnit: "min",
+          note: "Servir le bouillon en entrée, puis la viande et les légumes en plat — c'est la tradition."
+        }
+      ]
+    },
+    {
+      title: "Curry de Pois Chiches aux Épinards",
+      description:
+        "Un curry végétalien riche et parfumé, prêt en 30 minutes. Les épinards apportent une touche de verdure et de fer.",
+      userId: emmaId,
+      category: "main_course",
+      difficulty: "easy",
+      servings: 4,
+      prepTime: 10,
+      cookTime: 25,
+      imageUrl: IMG,
+      imageThumbnailUrl: THUMB,
+      imageMediumUrl: MEDIUM,
+      averageRating: 0,
+      ratingsCount: 0,
+      ingredients: [
+        { name: "Pois chiches cuits (boîte)", quantity: 400, unit: "g" },
+        { name: "Épinards frais", quantity: 150, unit: "g" },
+        { name: "Lait de coco entier", quantity: 400, unit: "ml" },
+        { name: "Tomates concassées (boîte)", quantity: 400, unit: "g" },
+        { name: "Oignon", quantity: 1, unit: "pièce(s)" },
+        { name: "Gousses d'ail", quantity: 3, unit: "pièce(s)" },
+        { name: "Pâte de curry rouge", quantity: 2, unit: "cs" },
+        { name: "Gingembre frais râpé", quantity: 10, unit: "g" },
+        { name: "Huile de coco", quantity: 1, unit: "cs" }
+      ],
+      steps: [
+        {
+          order: 1,
+          instruction:
+            "Faire revenir l'oignon émincé dans l'huile de coco jusqu'à translucidité, ajouter l'ail, le gingembre et la pâte de curry.",
+          duration: 5,
+          durationUnit: "min",
+          note: "La pâte de curry doit frire 1 min dans la matière grasse pour libérer ses arômes."
+        },
+        {
+          order: 2,
+          instruction:
+            "Ajouter les tomates concassées et le lait de coco, mélanger et laisser mijoter.",
+          duration: 10,
+          durationUnit: "min"
+        },
+        {
+          order: 3,
+          instruction:
+            "Incorporer les pois chiches et laisser cuire encore 10 min.",
+          duration: 10,
+          durationUnit: "min"
+        },
+        {
+          order: 4,
+          instruction:
+            "Hors du feu, ajouter les épinards et mélanger jusqu'à ce qu'ils soient flétris. Servir avec du riz basmati."
+        }
+      ]
     }
   ]
 }
