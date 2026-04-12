@@ -141,7 +141,7 @@ export default function Recipes() {
               params={{ id: recipe._id }}
               className="block"
             >
-              <div className="relative aspect-[4/3] bg-warm-50 overflow-hidden">
+              <div className="relative aspect-4/3 bg-warm-50 overflow-hidden">
                 {recipe.imageThumbnailUrl ? (
                   <img
                     src={recipe.imageThumbnailUrl}
