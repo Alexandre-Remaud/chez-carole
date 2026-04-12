@@ -45,8 +45,14 @@ export default function ShoppingListDetail({ listId }: Props) {
         return `${check}${qty}${unit}${qty || unit ? " " : ""}${item.name}`
       })
     ]
-    void navigator.clipboard.writeText(lines.join("\n"))
-    toast.success("Liste copiée dans le presse-papiers")
+    navigator.clipboard
+      .writeText(lines.join("\n"))
+      .then(() => {
+        toast.success("Liste copiée dans le presse-papiers")
+      })
+      .catch(() => {
+        toast.error("Impossible de copier dans le presse-papiers")
+      })
   }
 
   async function handleDelete() {

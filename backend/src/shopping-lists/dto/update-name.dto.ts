@@ -1,7 +1,8 @@
-import { IsString, MaxLength } from "class-validator"
+import { IsString, IsNotEmpty, MaxLength } from "class-validator"
 
 export class UpdateNameDto {
   @IsString()
+  @IsNotEmpty()
   @MaxLength(100)
   name: string
 }

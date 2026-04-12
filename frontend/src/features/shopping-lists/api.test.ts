@@ -70,6 +70,15 @@ describe("shoppingListsApi", () => {
     )
   })
 
+  it("rename should PATCH /shopping-lists/:id", async () => {
+    mockApiFetch.mockResolvedValue(mockList)
+    await shoppingListsApi.rename("list1", "Nouveau nom")
+    expect(mockApiFetch).toHaveBeenCalledWith(
+      expect.stringContaining("/shopping-lists/list1"),
+      expect.objectContaining({ method: "PATCH" })
+    )
+  })
+
   it("remove should DELETE /shopping-lists/:id", async () => {
     mockApiFetch.mockResolvedValue({ message: "Liste supprimée" })
     await shoppingListsApi.remove("list1")

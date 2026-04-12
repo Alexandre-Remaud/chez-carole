@@ -1,5 +1,6 @@
 import {
   IsString,
+  IsNotEmpty,
   IsArray,
   IsOptional,
   MaxLength,
@@ -21,6 +22,7 @@ class ServingsOverrideDto {
 
 export class CreateShoppingListDto {
   @IsString()
+  @IsNotEmpty()
   @MaxLength(100)
   name: string
 
