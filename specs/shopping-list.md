@@ -1,7 +1,7 @@
 # Liste de courses
 
 ## Statut
-in-progress
+done
 
 ## Description
 Génération d'une liste de courses à partir des ingrédients d'une ou plusieurs recettes.

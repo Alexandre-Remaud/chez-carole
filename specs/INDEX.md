@@ -40,7 +40,7 @@ Application de gestion de recettes de cuisine. Monorepo avec backend NestJS (Mon
 | Feature                          | Fichier                                    | Statut |
 | -------------------------------- | ------------------------------------------ | ------ |
 | Impression & Export PDF          | [print-export.md](print-export.md)         | todo   |
-| Liste de courses                 | [shopping-list.md](shopping-list.md)       | todo   |
+| Liste de courses                 | [shopping-list.md](shopping-list.md)       | done   |
 | Tags personnalisés               | [tags.md](tags.md)                         | todo   |
 | Collections / Carnets            | [collections.md](collections.md)           | todo   |
 
