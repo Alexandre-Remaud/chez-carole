@@ -3,12 +3,16 @@ import {
   IsOptional,
   IsBoolean,
   MaxLength,
+  MinLength,
+  IsNotEmpty,
   IsUrl
 } from "class-validator"
 
 export class UpdateCollectionDto {
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  @MinLength(1)
   @MaxLength(100)
   name?: string
 
@@ -22,6 +26,6 @@ export class UpdateCollectionDto {
   isPublic?: boolean
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   coverImage?: string
 }

@@ -1,6 +1,7 @@
 import { useParams } from "@tanstack/react-router"
 import { useCollection } from "@/features/collections/hooks"
 import { useAuth } from "@/features/auth/hooks"
+import { uploadService } from "@/features/upload/api"
 import { Link } from "@tanstack/react-router"
 import toast from "react-hot-toast"
 
@@ -61,22 +62,12 @@ export default function CollectionDetail() {
     }
   }
 
-  const UPLOAD_URL = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/upload/image`
-
   async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    const formData = new FormData()
-    formData.append("file", file)
     try {
-      const res = await fetch(UPLOAD_URL, {
-        method: "POST",
-        credentials: "include",
-        body: formData
-      })
-      if (!res.ok) throw new Error("Erreur d'upload")
-      const data = (await res.json()) as { originalUrl: string }
-      await updateCollection({ coverImage: data.originalUrl })
+      const { originalUrl } = await uploadService.uploadImage(file)
+      await updateCollection({ coverImage: originalUrl })
       toast.success("Image de couverture mise à jour")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur upload")

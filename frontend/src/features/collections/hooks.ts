@@ -79,7 +79,9 @@ export function useCollection(collectionId: string) {
     coverImage?: string
   }) {
     const updated = await collectionsApi.update(collectionId, payload)
-    setCollection((prev) => (prev ? { ...prev, ...updated } : prev))
+    setCollection((prev) =>
+      prev ? { ...prev, ...updated, recipes: prev.recipes } : prev
+    )
     return updated
   }
 

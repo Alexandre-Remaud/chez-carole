@@ -105,16 +105,14 @@ export class CollectionsService {
     this.validateObjectId(collectionId)
     this.validateObjectId(recipeId)
 
-    const [collection, recipe] = await Promise.all([
-      this.collectionModel.findById(collectionId).exec(),
-      this.recipeModel.findById(recipeId).exec()
-    ])
-
+    const collection = await this.collectionModel.findById(collectionId).exec()
     if (!collection) throw new NotFoundException("Collection not found")
-    if (!recipe) throw new NotFoundException("Recipe not found")
     if (collection.userId.toString() !== userId) {
       throw new ForbiddenException("Not the owner")
     }
+
+    const recipe = await this.recipeModel.findById(recipeId).exec()
+    if (!recipe) throw new NotFoundException("Recipe not found")
 
     const alreadyIn = collection.recipeIds.some(
       (id) => id.toString() === recipeId

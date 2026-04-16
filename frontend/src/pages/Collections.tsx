@@ -9,7 +9,8 @@ import toast from "react-hot-toast"
 export default function Collections() {
   const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
-  const { collections, loading, error, refresh } = useMyCollections()
+  const { collections, loading, error, refresh, removeCollection } =
+    useMyCollections()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -19,6 +20,15 @@ export default function Collections() {
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState("")
   const [submitting, setSubmitting] = useState(false)
+
+  async function handleDelete(collectionId: string) {
+    try {
+      await removeCollection(collectionId)
+      toast.success("Collection supprimée")
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur")
+    }
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
@@ -135,7 +145,30 @@ export default function Collections() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {collections.map((col) => (
-            <CollectionCard key={col._id} collection={col} />
+            <div key={col._id} className="relative group">
+              <CollectionCard collection={col} />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  void handleDelete(col._id)
+                }}
+                className="absolute top-2 left-2 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                aria-label="Supprimer la collection"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           ))}
         </div>
       )}

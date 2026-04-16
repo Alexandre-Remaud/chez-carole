@@ -179,6 +179,39 @@ describe("CollectionsService", () => {
   })
 
   describe("addRecipe", () => {
+    it("should add recipe and return collection detail", async () => {
+      const saveMock = jest.fn().mockResolvedValue(undefined)
+      const mutableCollection = {
+        ...mockCollection,
+        recipeIds: [],
+        save: saveMock,
+        toObject: jest
+          .fn()
+          .mockReturnValue({ ...mockCollection, recipeIds: [] })
+      }
+      mockCollectionModel.findById.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mutableCollection)
+      })
+      mockRecipeModel.findById.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockRecipe)
+      })
+      mockRecipeModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([mockRecipe])
+      })
+      const result = await service.addRecipe(COLL_ID, USER_ID, RECIPE_ID)
+      expect(saveMock).toHaveBeenCalled()
+      expect(result).toHaveProperty("recipes")
+    })
+
+    it("should throw 403 if not owner", async () => {
+      mockCollectionModel.findById.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockCollection)
+      })
+      await expect(
+        service.addRecipe(COLL_ID, OTHER_ID, RECIPE_ID)
+      ).rejects.toThrow(ForbiddenException)
+    })
+
     it("should throw 409 if recipe already in collection", async () => {
       const collWithRecipe = {
         ...mockCollection,
