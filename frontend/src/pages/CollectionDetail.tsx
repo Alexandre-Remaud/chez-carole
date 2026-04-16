@@ -57,18 +57,67 @@ export default function CollectionDetail() {
     }
   }
 
+  const UPLOAD_URL = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/upload/image`
+
+  async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const formData = new FormData()
+    formData.append("file", file)
+    try {
+      const res = await fetch(UPLOAD_URL, {
+        method: "POST",
+        credentials: "include",
+        body: formData
+      })
+      if (!res.ok) throw new Error("Erreur d'upload")
+      const data = (await res.json()) as { originalUrl: string }
+      await updateCollection({ coverImage: data.originalUrl })
+      toast.success("Image de couverture mise à jour")
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur upload")
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Cover image */}
-      {collection.coverImage && (
-        <div className="aspect-[3/1] rounded-2xl overflow-hidden mb-6">
+      <div className="aspect-[3/1] rounded-2xl overflow-hidden mb-6 bg-warm-50 relative group">
+        {collection.coverImage || collection.recipes[0]?.imageUrl ? (
           <img
-            src={collection.coverImage}
+            src={collection.coverImage ?? collection.recipes[0]?.imageUrl}
             alt={collection.name}
             className="w-full h-full object-cover"
           />
-        </div>
-      )}
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-warm-200">
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            >
+              <path d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9a2 2 0 0 1 2-2m0 0V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M7 7h10" />
+            </svg>
+          </div>
+        )}
+        {isOwner && (
+          <label className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all cursor-pointer">
+            <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+              Changer l'image
+            </span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={handleCoverUpload}
+            />
+          </label>
+        )}
+      </div>
 
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
